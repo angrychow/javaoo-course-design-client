@@ -17,11 +17,12 @@ public class LoginWidget {
 
     public static void main(String[] args) {
 
-        var params = new HashMap<String,Object>();
+        var params = new HashMap<String, Object>();
         var array = new ArrayList<Integer>();
-        array.add(123);array.add(123);
-        params.put("hello",array);
-        var result = ClientHttp.Post("https://119d25bf-546c-42f2-8b79-6e91a29fb770.mock.pstmn.io/post", params);
+        array.add(123);
+        array.add(123);
+        params.put("hello", array);
+        var result = ClientHttp.Post("https://19d25bf-546c-42f2-8b79-6e91a29fb770.mock.pstmn.io/post", params);
         System.out.println(result.toString());
 //        System.out.println(result.get("data") instanceof Integer);
 
