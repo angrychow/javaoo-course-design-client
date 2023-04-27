@@ -24,6 +24,8 @@ public class ChatWidget {
     public ChatWidget(Controller controller,String name) {
         this.controller = controller;
         this.remoteName = name;
+        this.recordTextArea.append("  您现在在与"+name+"聊天，此人很可疑，谨防上当受骗！\n");
+
     }
 
     public String getRemoteName() {
@@ -42,7 +44,6 @@ public class ChatWidget {
 //                System.out.println(frame.getDefaultCloseOperation());
             }
         });
-        this.recordTextArea.append("  您现在在与"+remoteName+"聊天，此人很可疑，谨防上当受骗！\n");
         frame.setMinimumSize(new Dimension(400,400));
         frame.setContentPane(this.mainPanel);
 //        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -54,4 +55,7 @@ public class ChatWidget {
 //        var chatWidget = new ChatWidget();
 //        chatWidget.showWidget();
 //    }
+    public JPanel getMainPanel() {
+        return this.mainPanel;
+    }
 }

@@ -44,6 +44,12 @@
           </scrollpane>
         </children>
       </grid>
+      <grid id="ba69c" binding="chatPanel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+        <constraints border-constraint="East"/>
+        <properties/>
+        <border type="none"/>
+        <children/>
+      </grid>
     </children>
   </grid>
 </form>

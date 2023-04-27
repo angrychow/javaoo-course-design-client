@@ -47,8 +47,8 @@ public class LoginWidget {
         array.add(123);
         array.add(123);
         params.put("hello", array);
-        var result = ClientHttp.Post("https://19d25bf-546c-42f2-8b79-6e91a29fb770.mock.pstmn.io/post", params);
-        System.out.println(result.toString());
+//        var result = ClientHttp.Post("https://119d25bf-546c-42f2-8b79-6e91a29fb770.mock.pstmn.io/post", params);
+//        System.out.println(result.toString());
 //        System.out.println(result.get("data") instanceof Integer);
 
         frame.setContentPane(this.mainPanel);

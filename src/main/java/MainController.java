@@ -13,6 +13,7 @@ public class MainController implements Controller {
     private LoginWidget loginWidget;
     private MainWidget mainWidget;
     private ArrayList<ChatWidget> chatWidgetList;
+
     MainController() {
         chatWidgetList = new ArrayList<>();
         try {
@@ -39,18 +40,19 @@ public class MainController implements Controller {
 //                var newChatWidget = new ChatWidget(this,this.mainWidget.getSelectName());
 //                newChatWidget.showWidget();
 //                chatWidgetList.add(newChatWidget);
-                ChatWidget newChatWidget = null;
-                for(var chatWidget : chatWidgetList) {
-                    if(chatWidget.getRemoteName().equals(name)) {
-                        newChatWidget = chatWidget;
-                        newChatWidget.showWidget();
-                    }
-                }
-                if(newChatWidget == null) {
-                    newChatWidget = new ChatWidget(this,this.mainWidget.getSelectName());
-                    newChatWidget.showWidget();
-                    chatWidgetList.add(newChatWidget);
-                }
+                mainWidget.setChatPanel(name);
+//                ChatWidget newChatWidget = null;
+//                for(var chatWidget : chatWidgetList) {
+//                    if(chatWidget.getRemoteName().equals(name)) {
+//                        newChatWidget = chatWidget;
+//                        newChatWidget.showWidget();
+//                    }
+//                }
+//                if(newChatWidget == null) {
+//                    newChatWidget = new ChatWidget(this,this.mainWidget.getSelectName());
+//                    newChatWidget.showWidget();
+//                    chatWidgetList.add(newChatWidget);
+//                }
             }
         }
     }

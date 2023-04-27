@@ -2,6 +2,7 @@ package widgets.main;
 
 import clientEnum.Event;
 import interfaces.Controller;
+import widgets.chat.ChatWidget;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -15,7 +16,8 @@ public class MainWidget {
     private JPanel mainPanel;
     private JList userList;
     private JButton button1;
-    private  JFrame frame;
+    private JPanel chatPanel;
+    private JFrame frame;
     private Controller controller;
 
     public MainWidget(Controller controller) {
@@ -24,7 +26,8 @@ public class MainWidget {
 
     public void showWidget() {
         this.frame = new JFrame("MainWidget");
-        frame.setSize(new Dimension(200,800));
+//        frame.setSize(new Dimension(800,800));
+        frame.setMinimumSize(new Dimension(1000, 800));
 //        userList.addListSelectionListener(new ListSelectionListener() {
 //            @Override
 //            public void valueChanged(ListSelectionEvent e) {
@@ -36,29 +39,41 @@ public class MainWidget {
         userList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                if(e.getClickCount() >=2 && getSelectName()!=null && !getSelectName().equals("")) {
+//                super.mouseClicked(e);
+                if (e.getClickCount() >= 2 && getSelectName() != null && !getSelectName().equals("")) {
                     controller.handleEvent(Event.OPEN_CHAT_WIDGET);
+//                    this.chatPanel.add(new ChatWidget(this.controller,"123").getMainPanel());
                 }
             }
         });
+
+        // mock data
         var listTest = new ArrayList<String>();
         listTest.add("angrychow");
         listTest.add("octopus");
         this.userList.setListData(listTest.toArray());
         this.frame.setContentPane(this.mainPanel);
+//        this.chatPanel.add(new ChatWidget(this.controller,"123").getMainPanel());
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.frame.pack();
 //        this.frame.setDefaultCloseOperation();
         this.frame.setVisible(true);
+
     }
 
     public String getSelectName() {
-        if(this.userList.getSelectedValue() instanceof String) {
+        if (this.userList.getSelectedValue() instanceof String) {
             return (String) this.userList.getSelectedValue();
         } else {
             return null;
         }
+    }
+
+    public void setChatPanel(String name) {
+        this.chatPanel.removeAll();
+        this.chatPanel.add(new ChatWidget(this.controller, name).getMainPanel());
+        this.frame.pack();
+
     }
 
     public void hideWidget() {
