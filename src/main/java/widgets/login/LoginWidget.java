@@ -2,10 +2,13 @@ package widgets.login;
 
 import clientEnum.Event;
 import interfaces.Controller;
+import utils.ClientHttp;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class LoginWidget {
     private JButton buttonLogin;
@@ -26,7 +29,6 @@ public class LoginWidget {
 //        frame.setVisible(true);
 //    }
 
-<<<<<<< HEAD
     public LoginWidget(Controller controller) {
         this.controller = controller;
     }
@@ -40,7 +42,6 @@ public class LoginWidget {
             }
         });
         this.frame = new JFrame("LoginWidget");
-=======
         var params = new HashMap<String, Object>();
         var array = new ArrayList<Integer>();
         array.add(123);
@@ -49,7 +50,6 @@ public class LoginWidget {
         var result = ClientHttp.Post("https://19d25bf-546c-42f2-8b79-6e91a29fb770.mock.pstmn.io/post", params);
         System.out.println(result.toString());
 //        System.out.println(result.get("data") instanceof Integer);
->>>>>>> 5181809ce64c4d6b09df0ad75b8165e834fa07a4
 
         frame.setContentPane(this.mainPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
