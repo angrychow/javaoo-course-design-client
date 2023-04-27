@@ -14,22 +14,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ClientHttp {
-    public static HashMap<String,Object> Get(String url, HashMap<String, Object> params) {
+    public static HashMap<String, Object> Get(String url, HashMap<String, Object> params) {
         try {
             var httpClient = HttpClients.createDefault();
             var uri = new URIBuilder(url);
-            if(params != null) {
-                for(Map.Entry<String,Object> param:params.entrySet()) {
-                    uri.setParameter(param.getKey(),param.getValue().toString());
+            if (params != null) {
+                for (Map.Entry<String, Object> param : params.entrySet()) {
+                    uri.setParameter(param.getKey(), param.getValue().toString());
                 }
             }
             var httpGet = new org.apache.http.client.methods.HttpGet(uri.build());
             var response = httpClient.execute(httpGet);
+
+            // status code
+            System.out.println(response.getStatusLine().getStatusCode());
+            HashMap<String, Object> resultMap = new HashMap<>();
+            resultMap.put("statusCode", response.getStatusLine().getStatusCode());
+
+            // body
             var entity = response.getEntity();
-//            var result = EntityUtils.toString(entity);
-//            System.out.println(result);
             var objectMapper = new ObjectMapper();
-            var resultMap = objectMapper.readValue(EntityUtils.toString(entity),HashMap.class);
+            resultMap.put("body", objectMapper.readValue(EntityUtils.toString(entity), HashMap.class));
             response.close();
             return resultMap;
         } catch (Exception e) {
@@ -37,7 +42,8 @@ public class ClientHttp {
             return null;
         }
     }
-    public static HashMap<String,Object> Post(String url,HashMap<String,Object> JSON) {
+
+    public static HashMap<String, Object> Post(String url, HashMap<String, Object> JSON) {
         try {
             CloseableHttpClient httpClient = HttpClients.createDefault();
             HttpPost httpPost = new HttpPost(url);
@@ -51,14 +57,17 @@ public class ClientHttp {
 
             CloseableHttpResponse response = httpClient.execute(httpPost);
 
+            // status code
+            System.out.println(response.getStatusLine().getStatusCode());
+            HashMap<String, Object> resultMap = new HashMap<>();
+            resultMap.put("statusCode", response.getStatusLine().getStatusCode());
 
+            // body
             var respEntity = response.getEntity();
-//            var result = EntityUtils.toString(entity);
-//            System.out.println(result);
-            var resultMap = objectMapper.readValue(EntityUtils.toString(respEntity),HashMap.class);
+            resultMap.put("body", objectMapper.readValue(EntityUtils.toString(respEntity), HashMap.class));
             response.close();
             return resultMap;
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
