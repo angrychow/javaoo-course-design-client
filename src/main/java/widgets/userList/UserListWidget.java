@@ -1,17 +1,26 @@
 package widgets.userList;
 
+import clientEnum.Event;
+import interfaces.Controller;
+
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.util.ArrayList;
 
 public class UserListWidget extends JPanel {
+    private Controller controller;
     // 用户列表
     private JList userList;
 
     // 纵向滚动
     private JScrollPane scrollPane;
 
-    public UserListWidget() {
+
+    public UserListWidget(Controller c) {
+        this.controller = c;
+
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 //        this.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 
@@ -19,6 +28,12 @@ public class UserListWidget extends JPanel {
 
         // 控制列表渲染格式
         this.userList.setCellRenderer(new UserListRenderer());
+        this.userList.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                controller.handleEvent(Event.OPEN_CHAT_WIDGET);
+            }
+        });
 
         // mock数据
         var mock = new ArrayList<String>();
@@ -36,8 +51,8 @@ public class UserListWidget extends JPanel {
     }
 
 
-    public JList<String> getUserList() {
-        return this.userList;
+    public String getSelectedUser() {
+        return (String) this.userList.getSelectedValue();
     }
 }
 

@@ -36,23 +36,8 @@ public class MainController implements Controller {
             }
 
             case OPEN_CHAT_WIDGET -> {
-//                var name = this.mainWidget.getSelectName();
-//                var newChatWidget = new ChatWidget(this,this.mainWidget.getSelectName());
-//                newChatWidget.showWidget();
-//                chatWidgetList.add(newChatWidget);
-//                mainWidget.setChatPanel(name);
-//                ChatWidget newChatWidget = null;
-//                for(var chatWidget : chatWidgetList) {
-//                    if(chatWidget.getRemoteName().equals(name)) {
-//                        newChatWidget = chatWidget;
-//                        newChatWidget.showWidget();
-//                    }
-//                }
-//                if(newChatWidget == null) {
-//                    newChatWidget = new ChatWidget(this,this.mainWidget.getSelectName());
-//                    newChatWidget.showWidget();
-//                    chatWidgetList.add(newChatWidget);
-//                }
+                String name = this.mainWidget.getSelectedUser();
+                this.mainWidget.setChatPanel(name);
             }
         }
     }

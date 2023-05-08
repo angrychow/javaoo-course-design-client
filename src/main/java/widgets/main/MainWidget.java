@@ -1,7 +1,9 @@
 package widgets.main;
 
 import interfaces.Controller;
+import widgets.chat.ChatPanel;
 import widgets.userList.UserListWidget;
+import utils.LayoutTools;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,15 +36,15 @@ public class MainWidget extends JFrame {
         this.setContentPane(this.mainPanel);
 
         // 好友列表
-        this.listPanel = new UserListWidget();
-        addItem(mainPanel, listPanel, 0, 0, 1, 1, 0.2, 0);
+        this.listPanel = new UserListWidget(c);
+        LayoutTools.addItem(mainPanel, listPanel, 0, 0, 1, 1, 0.2, 0);
 
-//        JTextArea text = new JTextArea("好友列表");
-//        this.listPanel.add(text);
-        this.chatPanel = new JPanel();
-        JTextArea text2 = new JTextArea("聊天框");
-        this.chatPanel.add(text2);
-        addItem(mainPanel, chatPanel, 1, 0, 4, 1, 0.8, 0);
+
+        this.chatPanel = new ChatPanel("Angrychow");
+        this.chatPanel.setBorder(BorderFactory.createLineBorder(Color.RED));
+//        JTextArea text2 = new JTextArea("聊天框");
+//        this.chatPanel.add(text2);
+        LayoutTools.addItem(mainPanel, chatPanel, 1, 0, GridBagConstraints.REMAINDER, 1, 0.8, 0);
     }
 
 
@@ -51,26 +53,17 @@ public class MainWidget extends JFrame {
         this.setVisible(true);
     }
 
-    /**
-     *
-     * @param p
-     * @param c
-     * @param x 横向格子，从0开始
-     * @param y 纵向格子，从0开始
-     * @param width 横向占用格子数
-     * @param height 纵向占用格子数
-     * @param weightx 横向权重 0～1
-     * @param weighty 纵向权重 0～1
-     */
-    private static void addItem(JPanel p, Component c, int x, int y, int width, int height, double weightx, double weighty) {
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.gridx = x;
-        gbc.gridy = y;
-        gbc.gridwidth = width;
-        gbc.gridheight = height;
-        gbc.weightx = weightx;
-        gbc.weighty = weighty;
-        p.add(c, gbc);
+    public String getSelectedUser() {
+        return ((UserListWidget) this.listPanel).getSelectedUser();
     }
+
+    public void setChatPanel(String name) {
+        System.out.println(name);
+        this.mainPanel.remove(this.chatPanel);
+        this.chatPanel = new ChatPanel(name);
+        LayoutTools.addItem(mainPanel, chatPanel, 1, 0, GridBagConstraints.REMAINDER, 1, 0.8, 0);
+        this.mainPanel.updateUI();
+    }
+
+
 }
