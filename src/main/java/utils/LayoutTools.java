@@ -28,6 +28,19 @@ public class LayoutTools {
         p.add(c, gbc);
     }
 
+    public static void addItem(JPanel p, Component c, int x, int y, int width, int height, double weightx, double weighty, Insets insets) {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.gridx = x;
+        gbc.gridy = y;
+        gbc.gridwidth = width;
+        gbc.gridheight = height;
+        gbc.weightx = weightx;
+        gbc.weighty = weighty;
+        gbc.insets = insets;
+        p.add(c, gbc);
+    }
+
     public static void addItem(JPanel p, Component c, int x, int y, int width, int height, double weightx, double weighty, int fill) {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;

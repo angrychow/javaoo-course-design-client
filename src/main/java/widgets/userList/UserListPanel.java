@@ -6,10 +6,11 @@ import interfaces.Controller;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.border.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class UserListWidget extends JPanel {
+public class UserListPanel extends JPanel {
     private Controller controller;
     // 用户列表
     private JList userList;
@@ -18,7 +19,7 @@ public class UserListWidget extends JPanel {
     private JScrollPane scrollPane;
 
 
-    public UserListWidget(Controller c) {
+    public UserListPanel(Controller c) {
         this.controller = c;
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));

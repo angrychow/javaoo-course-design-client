@@ -1,7 +1,6 @@
 import clientEnum.Event;
 import interfaces.Controller;
 import socket.ChatWebSocket;
-import widgets.chat.ChatWidget;
 import widgets.login.LoginWidget;
 import widgets.main.MainWidget;
 
@@ -12,10 +11,10 @@ public class MainController implements Controller {
     private ChatWebSocket webSocket;
     private LoginWidget loginWidget;
     private MainWidget mainWidget;
-    private ArrayList<ChatWidget> chatWidgetList;
+
 
     MainController() {
-        chatWidgetList = new ArrayList<>();
+
         try {
             this.webSocket = new ChatWebSocket(new URI("ws://localhost:8080"));
         } catch (Exception e) {

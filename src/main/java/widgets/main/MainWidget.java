@@ -2,7 +2,7 @@ package widgets.main;
 
 import interfaces.Controller;
 import widgets.chat.ChatPanel;
-import widgets.userList.UserListWidget;
+import widgets.userList.UserListPanel;
 import utils.LayoutTools;
 
 import javax.swing.*;
@@ -36,15 +36,14 @@ public class MainWidget extends JFrame {
         this.setContentPane(this.mainPanel);
 
         // 好友列表
-        this.listPanel = new UserListWidget(c);
-        LayoutTools.addItem(mainPanel, listPanel, 0, 0, 1, 1, 0.2, 0);
+        this.listPanel = new UserListPanel(c);
+        LayoutTools.addItem(mainPanel, listPanel, 0, 0, 1, 1, 0.2, 1);
 
 
         this.chatPanel = new ChatPanel("Angrychow");
-        this.chatPanel.setBorder(BorderFactory.createLineBorder(Color.RED));
-//        JTextArea text2 = new JTextArea("聊天框");
-//        this.chatPanel.add(text2);
-        LayoutTools.addItem(mainPanel, chatPanel, 1, 0, GridBagConstraints.REMAINDER, 1, 0.8, 0);
+//        this.chatPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        Insets i = new Insets(0, 10, 0, 0);
+        LayoutTools.addItem(mainPanel, chatPanel, 1, 0, GridBagConstraints.REMAINDER, 1, 0.8, 1, i);
     }
 
 
@@ -54,14 +53,15 @@ public class MainWidget extends JFrame {
     }
 
     public String getSelectedUser() {
-        return ((UserListWidget) this.listPanel).getSelectedUser();
+        return ((UserListPanel) this.listPanel).getSelectedUser();
     }
 
     public void setChatPanel(String name) {
         System.out.println(name);
         this.mainPanel.remove(this.chatPanel);
         this.chatPanel = new ChatPanel(name);
-        LayoutTools.addItem(mainPanel, chatPanel, 1, 0, GridBagConstraints.REMAINDER, 1, 0.8, 0);
+        Insets i = new Insets(0, 10, 0, 0);
+        LayoutTools.addItem(mainPanel, chatPanel, 1, 0, GridBagConstraints.REMAINDER, 1, 0.8, 0, i);
         this.mainPanel.updateUI();
     }
 

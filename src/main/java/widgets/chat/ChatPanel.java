@@ -10,6 +10,7 @@ public class ChatPanel extends JPanel {
     private JPanel sendPanel;
     private JTextArea inputTextArea;
     private JScrollPane sendScrollPane;
+    private JScrollPane recordScrollPane;
     private JButton sendButton;
     private GridBagLayout layout;
     private GridBagConstraints constraints;
@@ -30,7 +31,10 @@ public class ChatPanel extends JPanel {
         this.recordTextArea.setWrapStyleWord(true);
         this.recordTextArea.setEditable(false);
         this.recordTextArea.setText("test");
-        LayoutTools.addItem(this, this.recordTextArea, 0, 1, 1, 1, 1, 0.5);
+
+        this.recordScrollPane = new JScrollPane(this.recordTextArea);
+        Insets i = new Insets(10, 0, 10, 0);
+        LayoutTools.addItem(this, this.recordScrollPane, 0, 1, 1, 1, 1, 0.5, i);
 
         this.sendPanel = new JPanel();
         this.sendPanel.setLayout(new GridBagLayout());
