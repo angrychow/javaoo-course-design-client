@@ -1,5 +1,6 @@
 package widgets.main;
 
+import clientEnum.Event;
 import interfaces.Controller;
 import widgets.chat.ChatPanel;
 import widgets.userList.UserListPanel;
@@ -16,6 +17,12 @@ public class MainWidget extends JFrame {
     private JPanel listPanel;
     private JPanel chatPanel;
     private JList<String> chatList;
+    private JMenuBar menuBar;
+    private JMenu groupMenu;
+    private JMenu friendMenu;
+    private JMenuItem addFriendItem;
+    private JMenuItem createGroupItem;
+    private JMenuItem joinGroupItem;
 
     public MainWidget(Controller c) {
         super("Chat");
@@ -37,19 +44,48 @@ public class MainWidget extends JFrame {
 
         // 好友列表
         this.listPanel = new UserListPanel(c);
-        LayoutTools.addItem(mainPanel, listPanel, 0, 0, 1, 1, 0.2, 1);
+//        this.listPanel.setSize(200,500);
+        LayoutTools.addItem(mainPanel, listPanel, 0, 0, 1, 1, 1, 1,GridBagConstraints.BOTH);
 
 
+
+        // 对话者姓名
         this.chatPanel = new ChatPanel("Angrychow");
-//        this.chatPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        Insets i = new Insets(0, 10, 0, 0);
-        LayoutTools.addItem(mainPanel, chatPanel, 1, 0, GridBagConstraints.REMAINDER, 1, 0.8, 1, i);
+        this.chatPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        LayoutTools.addItem(mainPanel, chatPanel, 1, 0, GridBagConstraints.REMAINDER, 1, 4, 1,GridBagConstraints.BOTH);
+
+        // 菜单栏
+
+        this.menuBar = new JMenuBar();
+        this.friendMenu = new JMenu("好友");
+        this.groupMenu = new JMenu("群组");
+        this.addFriendItem = new JMenuItem("添加好友");
+        addFriendItem.addActionListener((e)->{
+            controller.handleEvent(Event.OPEN_ADD_FRIEND);
+        });
+        this.createGroupItem = new JMenuItem("创建群组");
+        createGroupItem.addActionListener((e)->{
+            controller.handleEvent(Event.OPEN_CREATE_GROUP);
+        });
+        this.joinGroupItem = new JMenuItem("加入群组");
+        joinGroupItem.addActionListener((e)->{
+            controller.handleEvent(Event.OPEN_JOIN_GROUP);
+        });
+        friendMenu.add(addFriendItem);
+        groupMenu.add(createGroupItem);
+        groupMenu.add(joinGroupItem);
+        menuBar.add(friendMenu);
+        menuBar.add(groupMenu);
+        this.setJMenuBar(menuBar);
     }
 
 
     public void showWidget() {
-//        this.pack();
+        this.pack();
+//        this.setSize(500,500);
+//        this.setResizable(false);
         this.setVisible(true);
+        this.mainPanel.updateUI();
     }
 
     public String getSelectedUser() {
@@ -57,11 +93,11 @@ public class MainWidget extends JFrame {
     }
 
     public void setChatPanel(String name) {
-        System.out.println(name);
+//        System.out.println(name);
         this.mainPanel.remove(this.chatPanel);
         this.chatPanel = new ChatPanel(name);
         Insets i = new Insets(0, 10, 0, 0);
-        LayoutTools.addItem(mainPanel, chatPanel, 1, 0, GridBagConstraints.REMAINDER, 1, 0.8, 0, i);
+        LayoutTools.addItem(mainPanel, chatPanel, 1, 0, GridBagConstraints.REMAINDER, 1, 4, 1, GridBagConstraints.BOTH);
         this.mainPanel.updateUI();
     }
 

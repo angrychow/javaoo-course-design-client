@@ -18,14 +18,17 @@ public class UserListPanel extends JPanel {
     // 纵向滚动
     private JScrollPane scrollPane;
 
-
     public UserListPanel(Controller c) {
+
         this.controller = c;
 
-        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
+        this.setLayout(new BorderLayout());
+//        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 //        this.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 
         this.userList = new JList();
+//        this.userList.setSize(300,400);
 
         // 控制列表渲染格式
         this.userList.setCellRenderer(new UserListRenderer());
@@ -44,7 +47,7 @@ public class UserListPanel extends JPanel {
         this.userList.setListData(mock.toArray());
 
         this.scrollPane = new JScrollPane(userList);
-        this.add(scrollPane);
+        this.add(scrollPane,BorderLayout.CENTER);
     }
 
     public void showWidget() {

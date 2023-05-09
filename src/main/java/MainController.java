@@ -1,16 +1,22 @@
 import clientEnum.Event;
 import interfaces.Controller;
 import socket.ChatWebSocket;
+import widgets.addFriend.AddFriendWidget;
+import widgets.createGroup.CreateGroupWidget;
+import widgets.joinGroup.JoinGroupWidget;
 import widgets.login.LoginWidget;
 import widgets.main.MainWidget;
 
 import java.net.URI;
-import java.util.ArrayList;
 
 public class MainController implements Controller {
     private ChatWebSocket webSocket;
     private LoginWidget loginWidget;
     private MainWidget mainWidget;
+    private AddFriendWidget addFriendWidget;
+    private CreateGroupWidget createGroupWidget;
+    private JoinGroupWidget joinGroupWidget;
+
 
 
     MainController() {
@@ -23,6 +29,10 @@ public class MainController implements Controller {
         }
         this.loginWidget = new LoginWidget(this);
         this.mainWidget = new MainWidget(this);
+
+        this.addFriendWidget = new AddFriendWidget(this);
+        this.createGroupWidget = new CreateGroupWidget(this);
+        this.joinGroupWidget = new JoinGroupWidget(this);
         loginWidget.showWidget();
     }
 
@@ -37,6 +47,18 @@ public class MainController implements Controller {
             case OPEN_CHAT_WIDGET -> {
                 String name = this.mainWidget.getSelectedUser();
                 this.mainWidget.setChatPanel(name);
+            }
+
+            case OPEN_ADD_FRIEND -> {
+                this.addFriendWidget.showWidget();
+            }
+
+            case OPEN_CREATE_GROUP -> {
+                this.createGroupWidget.showWidget();
+            }
+
+            case OPEN_JOIN_GROUP -> {
+                this.joinGroupWidget.showWidget();
             }
         }
     }
