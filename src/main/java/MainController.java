@@ -1,6 +1,7 @@
 import clientEnum.Event;
 import interfaces.Controller;
 import socket.ChatWebSocket;
+import socket.ChatWebSocketManager;
 import widgets.addFriend.AddFriendWidget;
 import widgets.createGroup.CreateGroupWidget;
 import widgets.joinGroup.JoinGroupWidget;
@@ -10,7 +11,7 @@ import widgets.main.MainWidget;
 import java.net.URI;
 
 public class MainController implements Controller {
-    private ChatWebSocket webSocket;
+    private ChatWebSocketManager webSocketManager;
     private LoginWidget loginWidget;
     private MainWidget mainWidget;
     private AddFriendWidget addFriendWidget;
@@ -21,12 +22,9 @@ public class MainController implements Controller {
 
     MainController() {
 
-        try {
-            this.webSocket = new ChatWebSocket(new URI("ws://localhost:8080"));
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Connect to WS failed");
-        }
+        webSocketManager = new ChatWebSocketManager(this);
+
+
         this.loginWidget = new LoginWidget(this);
         this.mainWidget = new MainWidget(this);
 
@@ -40,6 +38,8 @@ public class MainController implements Controller {
     public void handleEvent(Event e) {
         switch (e) {
             case LOGIN_SUCCESS -> {
+                webSocketManager.initChatWebSocket();
+                webSocketManager.sendMessage("Test");
                 this.loginWidget.hideWidget();
                 this.mainWidget.showWidget();
             }
@@ -62,4 +62,9 @@ public class MainController implements Controller {
             }
         }
     }
+    @Override
+    public void handleMessage(String text) {
+        System.out.println(text);
+    }
+
 }

@@ -1,5 +1,8 @@
 package socket;
 
+import clientEnum.Event;
+import interfaces.Controller;
+import org.java_websocket.WebSocket;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft;
 import org.java_websocket.handshake.ServerHandshake;
@@ -9,12 +12,14 @@ import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 
 public class ChatWebSocket extends WebSocketClient {
-    public ChatWebSocket(URI serverUri, Draft draft) {
-        super(serverUri, draft);
-    }
+    private Controller controller;
+//    public ChatWebSocket(URI serverUri, Draft draft) {
+//        super(serverUri, draft);
+//    }
 
-    public ChatWebSocket(URI serverURI) {
+    public ChatWebSocket(URI serverURI,Controller controller) {
         super(serverURI);
+        this.controller = controller;
     }
 
     @Override
@@ -30,21 +35,18 @@ public class ChatWebSocket extends WebSocketClient {
 
     @Override
     public void onMessage(String message) {
+        controller.handleMessage(message);
         System.out.println("received message: " + message);
     }
 
-    @Override
-    public void onMessage(ByteBuffer message) {
-        System.out.println("received ByteBuffer");
-    }
+//    @Override
+//    public void onMessage(ByteBuffer message) {
+//        System.out.println("received ByteBuffer");
+//    }
 
     @Override
     public void onError(Exception ex) {
         System.err.println("an error occurred:" + ex);
     }
 
-//    public static void main(String[] args) throws URISyntaxException {
-//        WebSocketClient client = new ChatWebSocket(new URI("ws://localhost:8887"));
-//        client.connect();
-//    }
 }
