@@ -38,8 +38,8 @@ public class MainController implements Controller {
     public void handleEvent(Event e) {
         switch (e) {
             case LOGIN_SUCCESS -> {
-                webSocketManager.initChatWebSocket();
-                webSocketManager.sendMessage("Test");
+//                webSocketManager.initChatWebSocket();
+//                webSocketManager.sendMessage("Test");
                 this.loginWidget.hideWidget();
                 this.mainWidget.showWidget();
             }

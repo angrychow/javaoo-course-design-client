@@ -3,6 +3,7 @@ package utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
@@ -23,7 +24,7 @@ public class ClientHttp {
                     uri.setParameter(param.getKey(), param.getValue().toString());
                 }
             }
-            var httpGet = new org.apache.http.client.methods.HttpGet(uri.build());
+            var httpGet = new HttpGet(uri.build());
             var response = httpClient.execute(httpGet);
 
             // status code
@@ -43,22 +44,29 @@ public class ClientHttp {
         }
     }
 
-    public static HashMap<String, Object> Post(String url, HashMap<String, Object> JSON) {
+    public static HashMap<String, Object> Post(String url, HashMap<String, Object> JSON, HashMap<String, Object> params) {
         try {
             CloseableHttpClient httpClient = HttpClients.createDefault();
-            HttpPost httpPost = new HttpPost(url);
+            var uri = new URIBuilder(url);
+            if (params != null) {
+                for (Map.Entry<String, Object> param : params.entrySet()) {
+                    uri.setParameter(param.getKey(), param.getValue().toString());
+                }
+            }
+            HttpPost httpPost = new HttpPost(uri.build());
             // 设置请求头，将 Content-Type 设置为 application/json
             httpPost.setHeader("Content-Type", "application/json");
             // 设置 POST 请求参数，将 JSON 数据转换为 String 类型，并将其放入 HttpEntity 中
             var objectMapper = new ObjectMapper();
-            String JSONString = objectMapper.writeValueAsString(JSON);
-            HttpEntity entity = new StringEntity(JSONString);
-            httpPost.setEntity(entity);
-
+            if(JSON != null) {
+                String JSONString = objectMapper.writeValueAsString(JSON);
+                HttpEntity entity = new StringEntity(JSONString);
+                httpPost.setEntity(entity);
+            }
             CloseableHttpResponse response = httpClient.execute(httpPost);
 
             // status code
-            System.out.println(response.getStatusLine().getStatusCode());
+            System.out.println("get");
             HashMap<String, Object> resultMap = new HashMap<>();
             resultMap.put("statusCode", response.getStatusLine().getStatusCode());
 
