@@ -4,6 +4,7 @@ import socket.ChatWebSocket;
 import socket.ChatWebSocketManager;
 import widgets.addFriend.AddFriendWidget;
 import widgets.createGroup.CreateGroupWidget;
+import widgets.face.FaceWidget;
 import widgets.joinGroup.JoinGroupWidget;
 import widgets.login.LoginWidget;
 import widgets.main.MainWidget;
@@ -18,6 +19,7 @@ public class MainController implements Controller {
     private CreateGroupWidget createGroupWidget;
     private JoinGroupWidget joinGroupWidget;
 
+    private FaceWidget faceWidget;
 
 
     MainController() {
@@ -28,9 +30,16 @@ public class MainController implements Controller {
         this.loginWidget = new LoginWidget(this);
         this.mainWidget = new MainWidget(this);
 
+
         this.addFriendWidget = new AddFriendWidget(this);
         this.createGroupWidget = new CreateGroupWidget(this);
         this.joinGroupWidget = new JoinGroupWidget(this);
+        try {
+            this.faceWidget = new FaceWidget(12345);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         loginWidget.showWidget();
     }
 
@@ -60,6 +69,11 @@ public class MainController implements Controller {
 
             case OPEN_JOIN_GROUP -> {
                 this.joinGroupWidget.showWidget();
+            }
+
+            case OPEN_FACE_WIDGET -> {
+//                this.mainWidget.showFaceWidget();
+
             }
         }
     }
