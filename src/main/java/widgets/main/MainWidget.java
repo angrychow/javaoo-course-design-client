@@ -14,7 +14,7 @@ public class MainWidget extends JFrame {
     private GridBagLayout layout;
     private GridBagConstraints constraints;
     private JPanel mainPanel;
-    private JPanel listPanel;
+    private UserListPanel listPanel;
     private JPanel chatPanel;
     private JList<String> chatList;
     private JMenuBar menuBar;
@@ -24,11 +24,15 @@ public class MainWidget extends JFrame {
     private JMenuItem createGroupItem;
     private JMenuItem joinGroupItem;
 
+    public void updateFriendsList() {
+        this.listPanel.updateUserList();
+    }
+
     public MainWidget(Controller c) {
         super("Chat");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(400, 400);
-
+//        this.setSize(400, 400);
+        this.pack();
         this.controller = c;
 
         // 布局

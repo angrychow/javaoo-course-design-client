@@ -15,7 +15,7 @@ public class ChatWebSocketManager {
     public void initChatWebSocket() {
 
         try {
-            chatWebSocket = new ChatWebSocket(new URI("ws://127.0.0.1:6788"),controller);
+            chatWebSocket = new ChatWebSocket(new URI("ws://10.28.166.91:19560/ws/test/chat/2"),controller);
             chatWebSocket.connect();
             while(!chatWebSocket.isOpen());
         } catch (Exception e) {

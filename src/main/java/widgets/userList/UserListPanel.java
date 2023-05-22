@@ -1,14 +1,16 @@
 package widgets.userList;
 
 import clientEnum.Event;
+import entity.User;
 import interfaces.Controller;
+import utils.Bus;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.border.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class UserListPanel extends JPanel {
     private Controller controller;
@@ -39,12 +41,14 @@ public class UserListPanel extends JPanel {
             }
         });
 
-        // mock数据
-        var mock = new ArrayList<String>();
-        mock.add("123");
-        mock.add("octo");
+        // List 数据 Convert
+        var userListData = new ArrayList<String>();
+        for(User e:Bus.friendList) {
+            userListData.add(e.name);
+        }
+        System.out.println(userListData);
 
-        this.userList.setListData(mock.toArray());
+        this.userList.setListData(userListData.toArray());
 
         this.scrollPane = new JScrollPane(userList);
         this.add(scrollPane,BorderLayout.CENTER);
@@ -57,6 +61,27 @@ public class UserListPanel extends JPanel {
 
     public String getSelectedUser() {
         return (String) this.userList.getSelectedValue();
+    }
+    public int getSelectedUserId() {
+        AtomicInteger idReturn = new AtomicInteger();
+        for(User e:Bus.friendList) {
+            if(e.name.equals(UserListPanel.this.getSelectedUser())) {
+                idReturn.set(e.ID);
+            }
+        }
+        return idReturn.get();
+    }
+
+    public void updateUserList() {
+        var userListData = new ArrayList<String>();
+        for(User e:Bus.friendList) {
+            userListData.add(e.name);
+        }
+        this.userList.setListData(userListData.toArray());
+        System.out.println(userListData);
+        this.scrollPane = new JScrollPane(userList);
+        this.add(scrollPane,BorderLayout.CENTER);
+        this.userList.updateUI();
     }
 }
 

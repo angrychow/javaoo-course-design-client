@@ -19,12 +19,16 @@ public class ClientHttp {
         try {
             var httpClient = HttpClients.createDefault();
             var uri = new URIBuilder(url);
+
             if (params != null) {
                 for (Map.Entry<String, Object> param : params.entrySet()) {
                     uri.setParameter(param.getKey(), param.getValue().toString());
                 }
             }
             var httpGet = new HttpGet(uri.build());
+            if(!Bus.EmbedToken.equals("")) {
+                httpGet.setHeader("token",Bus.EmbedToken);
+            }
             var response = httpClient.execute(httpGet);
 
             // status code
@@ -56,6 +60,9 @@ public class ClientHttp {
             HttpPost httpPost = new HttpPost(uri.build());
             // 设置请求头，将 Content-Type 设置为 application/json
             httpPost.setHeader("Content-Type", "application/json");
+            if(!Bus.EmbedToken.equals("")) {
+                httpPost.setHeader("token",Bus.EmbedToken);
+            }
             // 设置 POST 请求参数，将 JSON 数据转换为 String 类型，并将其放入 HttpEntity 中
             var objectMapper = new ObjectMapper();
             if(JSON != null) {

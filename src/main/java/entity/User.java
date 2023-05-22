@@ -4,15 +4,23 @@ import java.util.UUID;
 
 public class User {
     public String name;
-    public String ID;
+    public int ID;
 
     public User(String name) {
         this.name = name;
 //        this.ID = UUID.randomUUID().toString();
     }
 
-    public User(String name, String ID) {
+    public User(String name, int ID) {
         this.name = name;
         this.ID = ID;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "name='" + name + '\'' +
+                ", ID=" + ID +
+                '}';
     }
 }
