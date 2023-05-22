@@ -11,6 +11,7 @@ import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier;
 import static org.bytedeco.opencv.global.opencv_imgproc.*;
 
 import java.awt.*;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.net.URL;
@@ -26,6 +27,8 @@ import org.bytedeco.opencv.opencv_imgproc.*;
 import org.bytedeco.opencv.opencv_calib3d.*;
 import org.bytedeco.opencv.opencv_objdetect.*;
 import org.bytedeco.opencv.opencv_face.*;
+import utils.BaseUrl;
+import utils.ClientHttp;
 
 
 import javax.swing.*;
@@ -40,6 +43,9 @@ import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
 import javax.swing.*;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.HashMap;
 
 import static org.bytedeco.opencv.global.opencv_core.CV_8UC1;
 import static org.bytedeco.opencv.global.opencv_imgproc.resize;
@@ -47,10 +53,8 @@ import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
 import static org.bytedeco.opencv.global.opencv_core.*;
 
 public class FaceWidget {
-    private static int count = 0;
 
-
-    public FaceWidget() throws Exception {
+    public FaceWidget(int id) throws Exception {
         String classifierName = "haarcascade_frontalface_alt.xml";
 
         CascadeClassifier classifier = new CascadeClassifier(classifierName);
@@ -90,7 +94,11 @@ public class FaceWidget {
         Mat buffer = new Mat(newSize);
         org.bytedeco.opencv.global.opencv_imgproc.resize(t, buffer, newSize);
 
-        while ((grabbedImage = converter.convert(grabber.grab())) != null) {
+
+        int count = 0;
+        ArrayList<String> facesEncode = new ArrayList<String>();
+        int interval = 0;
+        while ((grabbedImage = converter.convert(grabber.grab())) != null && count <= 10) {
             cvtColor(grabbedImage, grayImage, CV_BGR2GRAY);
             RectVector faces = new RectVector();
             classifier.detectMultiScale(grayImage, faces);
@@ -117,13 +125,30 @@ public class FaceWidget {
             long n = contours.size();
 
             Mat linedImage = grabbedImage;
+
+
             if (rBuf != null) {
-                count++;
                 Mat faceImg = new Mat(grabbedImage, rBuf);
                 org.bytedeco.opencv.global.opencv_imgproc.resize(faceImg, faceImg, newSize);
                 frame2.showImage(converter.convert(faceImg));
                 buffer = faceImg;
                 cvtColor(faceImg, faceImg, CV_BGR2GRAY);
+
+                if (interval == 5) {
+                    interval = 0;
+                    count++;
+
+                    BytePointer bytePointer = new BytePointer();
+                    imencode(".jpg", faceImg, bytePointer);
+                    byte[] bytes = new byte[(int) bytePointer.limit()];
+                    bytePointer.get(bytes);
+                    String base64 = Base64.getEncoder().encodeToString(bytes);
+                    facesEncode.add(base64);
+                    System.out.println(base64);
+                } else {
+                    interval++;
+                }
+
 
             } else {
                 frame2.showImage(converter.convert(buffer));
@@ -143,6 +168,14 @@ public class FaceWidget {
 //            recorder.record(rotatedFrame);
             mainFrame.getContentPane().repaint();
         }
+
+        HashMap<String, Object> res = new HashMap<>();
+        System.out.println(facesEncode.size());
+        res.put("id", id);
+        res.put("faceImages", facesEncode);
+        ClientHttp.Post(BaseUrl.GetUrl("/face/register"), res, null);
+        mainFrame.dispose();
+        grabber.stop();
     }
 
     public static void addItem(JPanel p, Component c, int x, int y, int width, int height, double weightx, double weighty) {
