@@ -39,7 +39,7 @@ public class MainController implements Controller {
         switch (e) {
             case LOGIN_SUCCESS -> {
                 webSocketManager.initChatWebSocket();
-//                webSocketManager.sendMessage("Test");
+                webSocketManager.sendMessage("Test");
                 this.mainWidget.updateFriendsList();
                 this.loginWidget.hideWidget();
                 this.mainWidget.showWidget();
