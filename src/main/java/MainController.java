@@ -1,4 +1,7 @@
 import clientEnum.Event;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import entity.WebSocketMsg;
 import interfaces.Controller;
 import socket.ChatWebSocket;
 import socket.ChatWebSocketManager;
@@ -10,6 +13,7 @@ import widgets.login.LoginWidget;
 import widgets.main.MainWidget;
 
 import java.net.URI;
+import java.util.HashMap;
 
 public class MainController implements Controller {
     private ChatWebSocketManager webSocketManager;
@@ -34,12 +38,12 @@ public class MainController implements Controller {
         this.addFriendWidget = new AddFriendWidget(this);
         this.createGroupWidget = new CreateGroupWidget(this);
         this.joinGroupWidget = new JoinGroupWidget(this);
-        try {
-            this.faceWidget = new FaceWidget(12345);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            this.faceWidget = new FaceWidget(12345);
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         loginWidget.showWidget();
     }
 
@@ -48,7 +52,7 @@ public class MainController implements Controller {
         switch (e) {
             case LOGIN_SUCCESS -> {
                 webSocketManager.initChatWebSocket();
-                webSocketManager.sendMessage("Test");
+//                webSocketManager.sendMessage("Test");
                 this.mainWidget.updateFriendsList();
                 this.loginWidget.hideWidget();
                 this.mainWidget.showWidget();
@@ -75,11 +79,35 @@ public class MainController implements Controller {
 //                this.mainWidget.showFaceWidget();
 
             }
+
+            case USERLIST_CHANGE -> {
+                this.mainWidget.handleUserListChange();
+            }
+
+            case SEND_MESSAGE -> {
+                this.mainWidget.handleSendText();
+            }
         }
     }
     @Override
     public void handleMessage(String text) {
         System.out.println(text);
+        var objectMapper = new ObjectMapper();
+        try {
+//            var body = objectMapper.readValue(text, HashMap.class);
+            var msg = objectMapper.readValue(text, WebSocketMsg.class);
+            this.mainWidget.setNewMessage(msg.getSourceUser(),msg.getContent(),msg.isGroupMsg(),msg.getSendTime());
+        } catch (Exception e) {
+//            e.printStackTrace();
+            System.out.println(e.getStackTrace());
+            System.out.println("收到了非 json 字符串的数据");
+        }
+
+    }
+
+    @Override
+    public int getNowChatUid() {
+        return this.mainWidget.getSelectedUserId();
     }
 
 }

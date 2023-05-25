@@ -1,6 +1,7 @@
 package socket;
 
 import interfaces.Controller;
+import utils.Bus;
 
 import java.net.URI;
 
@@ -15,7 +16,8 @@ public class ChatWebSocketManager {
     public void initChatWebSocket() {
 
         try {
-            chatWebSocket = new ChatWebSocket(new URI("ws://10.28.166.91:13120/websocket/angrychow"),controller);
+            var temp = String.valueOf(Bus.Uid);
+            chatWebSocket = new ChatWebSocket(new URI("ws://10.28.166.24:19560/ws/"+temp),controller);
             chatWebSocket.connect();
             while(!chatWebSocket.isOpen());
         } catch (Exception e) {

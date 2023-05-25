@@ -19,6 +19,7 @@ public class UserListPanel extends JPanel {
 
     // 纵向滚动
     private JScrollPane scrollPane;
+    private ArrayList<String> userListData;
 
     public UserListPanel(Controller c) {
 
@@ -42,7 +43,7 @@ public class UserListPanel extends JPanel {
         });
 
         // List 数据 Convert
-        var userListData = new ArrayList<String>();
+        this.userListData = new ArrayList<String>();
         for(User e:Bus.friendList) {
             userListData.add(e.name);
         }
@@ -52,6 +53,10 @@ public class UserListPanel extends JPanel {
 
         this.scrollPane = new JScrollPane(userList);
         this.add(scrollPane,BorderLayout.CENTER);
+        this.userList.addListSelectionListener((e)->{
+            UserListPanel.this.controller.handleEvent(Event.USERLIST_CHANGE);
+        });
+//        this.userList.setSelectedValue();
     }
 
     public void showWidget() {
@@ -70,6 +75,22 @@ public class UserListPanel extends JPanel {
             }
         }
         return idReturn.get();
+    }
+    public void setSelectedById(int id) {
+        var temp = this.userListData.toArray();
+        String name = null;
+        int idx = 0;
+        for(User e:Bus.friendList) {
+            if(e.ID == id) {
+                name = e.name;
+            }
+        }
+        for(int i=0;i<temp.length;i++) {
+            if(temp[i].equals(name)) {
+                idx = i;
+            }
+        }
+        this.userList.setSelectedIndex(idx);
     }
 
     public void updateUserList() {

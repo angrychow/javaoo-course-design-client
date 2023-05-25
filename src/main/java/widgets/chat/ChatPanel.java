@@ -1,9 +1,15 @@
 package widgets.chat;
 
+import clientEnum.Event;
+import interfaces.Controller;
+import utils.BaseUrl;
+import utils.Bus;
+import utils.ClientHttp;
 import utils.LayoutTools;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashMap;
 
 public class ChatPanel extends JPanel {
     private JPanel mainPanel;
@@ -16,8 +22,10 @@ public class ChatPanel extends JPanel {
     private GridBagConstraints constraints;
     private JLabel name;
     private JTextArea recordTextArea;
+    private Controller controller;
 
-    public ChatPanel(String name) {
+    public ChatPanel(String name, Controller c) {
+        this.controller = c;
         this.layout = new GridBagLayout();
         this.constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.BOTH;
@@ -30,7 +38,6 @@ public class ChatPanel extends JPanel {
         this.recordTextArea.setLineWrap(true);
         this.recordTextArea.setWrapStyleWord(true);
         this.recordTextArea.setEditable(false);
-        this.recordTextArea.setText("test");
 
         this.recordScrollPane = new JScrollPane(this.recordTextArea);
         Insets i = new Insets(10, 0, 10, 0);
@@ -52,5 +59,35 @@ public class ChatPanel extends JPanel {
         this.sendPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         LayoutTools.addItem(this, sendPanel, 0, 2, 1, 1, 1, 0.4);
+
+        this.sendButton.addActionListener((e)->{
+            HashMap<String,Object> params = new HashMap<>();
+            params.put("from", Bus.Uid);
+            params.put("to",controller.getNowChatUid());
+            params.put("msg",ChatPanel.this.inputTextArea.getText());
+            this.controller.handleEvent(Event.SEND_MESSAGE);
+            var resp = ClientHttp.Post(BaseUrl.GetUrl("/chat/send"),null,params);
+            System.out.println(resp.toString());
+        });
+    }
+
+    public void replaceText(String text) {
+        this.recordTextArea.setText(text);
+    }
+
+    public void appendText(String text) {
+        this.recordTextArea.append(text);
+    }
+
+    public String getChatText() {
+        return this.inputTextArea.getText();
+    }
+
+    public void clearChatText() {
+        this.inputTextArea.setText("");
+    }
+
+    public void setName(String name) {
+        this.name.setText(name);
     }
 }
