@@ -1,8 +1,14 @@
 package widgets.addFriend;
 
+import clientEnum.Event;
+import entity.User;
 import interfaces.Controller;
+import utils.BaseUrl;
+import utils.Bus;
+import utils.ClientHttp;
 
 import javax.swing.*;
+import java.util.HashMap;
 
 public class AddFriendWidget {
     private JPanel panel1;
@@ -16,6 +22,18 @@ public class AddFriendWidget {
         frame = new JFrame("AddFriend");
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        addButton.addActionListener((e -> {
+            var params = new HashMap<String,Object>();
+            params.put("from", Bus.Uid);
+            params.put("to",Integer.parseInt(idTextField.getText()));
+            var resp = ClientHttp.Post(BaseUrl.GetUrl("/relation/add"),null,params);
+            System.out.println(resp);
+            resp = (HashMap<String, Object>) resp.get("body");
+            if((int)resp.get("statusCode") == 200) {
+                Bus.friendList.add(new User("用户"+idTextField.getText(),Integer.parseInt(idTextField.getText())));
+                controller.handleEvent(Event.UPDATE_FRIEND_LIST);
+            }
+        }));
     }
 
     public void showWidget() {

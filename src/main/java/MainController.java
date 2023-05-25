@@ -11,6 +11,7 @@ import widgets.face.FaceWidget;
 import widgets.joinGroup.JoinGroupWidget;
 import widgets.login.LoginWidget;
 import widgets.main.MainWidget;
+import widgets.requestManagement.RequestManagement;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ public class MainController implements Controller {
     private AddFriendWidget addFriendWidget;
     private CreateGroupWidget createGroupWidget;
     private JoinGroupWidget joinGroupWidget;
+    private RequestManagement requestManagement;
 
     private FaceWidget faceWidget;
 
@@ -34,7 +36,7 @@ public class MainController implements Controller {
         this.loginWidget = new LoginWidget(this);
         this.mainWidget = new MainWidget(this);
 
-
+        this.requestManagement = new RequestManagement(this);
         this.addFriendWidget = new AddFriendWidget(this);
         this.createGroupWidget = new CreateGroupWidget(this);
         this.joinGroupWidget = new JoinGroupWidget(this);
@@ -80,12 +82,20 @@ public class MainController implements Controller {
 
             }
 
+            case OPEN_REQUEST_MANAGEMENT -> {
+                this.requestManagement.ShowWidget();
+            }
+
             case USERLIST_CHANGE -> {
                 this.mainWidget.handleUserListChange();
             }
 
             case SEND_MESSAGE -> {
                 this.mainWidget.handleSendText();
+            }
+
+            case UPDATE_FRIEND_LIST -> {
+                this.mainWidget.updateFriendsList();
             }
         }
     }

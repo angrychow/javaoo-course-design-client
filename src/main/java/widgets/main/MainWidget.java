@@ -31,10 +31,12 @@ public class MainWidget extends JFrame {
     private JMenuItem addFriendItem;
     private JMenuItem createGroupItem;
     private JMenuItem joinGroupItem;
+    private JMenuItem handleFriendItem;
     private HashMap<Integer,String> recordMap;
 
     public void updateFriendsList() {
         this.listPanel.updateUserList();
+        this.pack();
     }
 
     public MainWidget(Controller c) {
@@ -74,8 +76,12 @@ public class MainWidget extends JFrame {
         this.friendMenu = new JMenu("好友");
         this.groupMenu = new JMenu("群组");
         this.addFriendItem = new JMenuItem("添加好友");
+        this.handleFriendItem = new JMenuItem("处理好友申请");
         addFriendItem.addActionListener((e)->{
             controller.handleEvent(Event.OPEN_ADD_FRIEND);
+        });
+        handleFriendItem.addActionListener((e)->{
+            controller.handleEvent(Event.OPEN_REQUEST_MANAGEMENT);
         });
         this.createGroupItem = new JMenuItem("创建群组");
         createGroupItem.addActionListener((e)->{
@@ -86,6 +92,7 @@ public class MainWidget extends JFrame {
             controller.handleEvent(Event.OPEN_JOIN_GROUP);
         });
         friendMenu.add(addFriendItem);
+        friendMenu.add(handleFriendItem);
         groupMenu.add(createGroupItem);
         groupMenu.add(joinGroupItem);
         menuBar.add(friendMenu);
@@ -164,11 +171,15 @@ public class MainWidget extends JFrame {
         int uid = this.listPanel.getSelectedUserId();
         this.chatPanel.appendText(Bus.UserName+" "+displayDateString+"\n"+content+"\n\n");
         if(this.recordMap.containsKey(uid)) {
-            this.recordMap.replace(uid,this.recordMap.get(uid)+'\n'+ GetUser.getName(uid)+" "+displayDateString+"\n"+content+"\n\n");
+            this.recordMap.replace(uid,this.recordMap.get(uid)+'\n'+ Bus.UserName+" "+displayDateString+"\n"+content+"\n\n");
         } else {
-            this.recordMap.put(uid, GetUser.getName(uid)+" "+displayDateString+"\n"+content+"\n\n");
+            this.recordMap.put(uid, Bus.UserName+" "+displayDateString+"\n"+content+"\n\n");
         }
         this.chatPanel.replaceText(this.recordMap.get(uid));
+    }
+
+    public void updateFriendList() {
+        this.listPanel.updateUserList();
     }
 
 }

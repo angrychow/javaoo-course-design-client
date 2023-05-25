@@ -100,8 +100,8 @@ public class UserListPanel extends JPanel {
         }
         this.userList.setListData(userListData.toArray());
         System.out.println(userListData);
-        this.scrollPane = new JScrollPane(userList);
-        this.add(scrollPane,BorderLayout.CENTER);
+//        this.scrollPane = new JScrollPane(userList);
+//        this.add(scrollPane,BorderLayout.CENTER);
         this.userList.updateUI();
     }
 }
