@@ -73,6 +73,19 @@ public class LoginWidget {
                         });
                         System.out.println(Bus.friendList);
                     }
+                    var groupsResult = ClientHttp.Post(BaseUrl.GetUrl("/group/groups"),null,friendsParams);
+                    if(friendsResult.get("statusCode").equals(200)) {
+                        var groupsRawList = (ArrayList<HashMap<String,Object>>)((HashMap<String,Object>)groupsResult.get("body")).get("data");
+                        groupsRawList.stream().forEach((item)->{
+                            var isGroupCreator= "等级 "+item.get("level")+" ";
+                            if((int)item.get("owner") == Bus.Uid) {
+                                isGroupCreator += "(群主)";
+                            }
+                            var ret = new User((String)item.get("groupName")+isGroupCreator,(int)item.get("id"));
+                            Bus.friendList.add(ret);
+                        });
+                        System.out.println(Bus.friendList);
+                    }
                     LoginWidget.this.controller.handleEvent(Event.LOGIN_SUCCESS);
                 } else {
                     dialog.add(new JLabel("错误："+resultBody.get("msg")));

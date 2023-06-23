@@ -1,10 +1,14 @@
 import clientEnum.Event;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import entity.User;
 import entity.WebSocketMsg;
 import interfaces.Controller;
 import socket.ChatWebSocket;
 import socket.ChatWebSocketManager;
+import utils.BaseUrl;
+import utils.Bus;
+import utils.ClientHttp;
 import widgets.addFriend.AddFriendWidget;
 import widgets.createGroup.CreateGroupWidget;
 import widgets.face.FaceWidget;
@@ -13,7 +17,9 @@ import widgets.login.LoginWidget;
 import widgets.main.MainWidget;
 import widgets.requestManagement.RequestManagement;
 
+import javax.swing.*;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MainController implements Controller {
@@ -40,12 +46,12 @@ public class MainController implements Controller {
         this.addFriendWidget = new AddFriendWidget(this);
         this.createGroupWidget = new CreateGroupWidget(this);
         this.joinGroupWidget = new JoinGroupWidget(this);
-//        try {
-//            this.faceWidget = new FaceWidget(12345);
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        try {
+            this.faceWidget = new FaceWidget(12345);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         loginWidget.showWidget();
     }
 
@@ -58,6 +64,46 @@ public class MainController implements Controller {
                 this.mainWidget.updateFriendsList();
                 this.loginWidget.hideWidget();
                 this.mainWidget.showWidget();
+                new Thread(()->{
+                    while(true) {
+                        var tempFriendList = new ArrayList<User>();
+                        var friendsParams = new HashMap<String,Object>();
+                        friendsParams.put("user", Bus.Uid);
+                        var friendsResult = ClientHttp.Post(BaseUrl.GetUrl("/relation/friends"),null,friendsParams);
+                        if(friendsResult.get("statusCode").equals(200)) {
+                            var friendsRawList = (ArrayList<HashMap<String,Object>>)((HashMap<String,Object>)friendsResult.get("body")).get("data");
+//                        System.out.println(friendsRawList);
+                            friendsRawList.stream().forEach((item)->{
+                                var ret = new User((String)item.get("name"),(int)item.get("id"));
+//                            ret.name = (String)item.get("name");
+//                            ret.
+//                            return ret;
+                                tempFriendList.add(ret);
+                            });
+                            System.out.println(Bus.friendList);
+                        }
+                        var groupsResult = ClientHttp.Post(BaseUrl.GetUrl("/group/groups"),null,friendsParams);
+                        if(friendsResult.get("statusCode").equals(200)) {
+                            var groupsRawList = (ArrayList<HashMap<String,Object>>)((HashMap<String,Object>)groupsResult.get("body")).get("data");
+                            groupsRawList.stream().forEach((item)->{
+                                var isGroupCreator= "等级 "+item.get("level")+" ";
+                                if((int)item.get("owner") == Bus.Uid) {
+                                    isGroupCreator += "(群主)";
+                                }
+                                var ret = new User((String)item.get("groupName")+isGroupCreator,(int)item.get("id"));
+                                tempFriendList.add(ret);
+                            });
+                            System.out.println(Bus.friendList);
+                        }
+                        Bus.friendList = tempFriendList;
+                        MainController.this.handleEvent(Event.UPDATE_FRIEND_LIST);// 每 10 秒更新一次好友列表
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }).start();
             }
 
             case OPEN_CHAT_WIDGET -> {
@@ -106,7 +152,13 @@ public class MainController implements Controller {
         try {
 //            var body = objectMapper.readValue(text, HashMap.class);
             var msg = objectMapper.readValue(text, WebSocketMsg.class);
-            this.mainWidget.setNewMessage(msg.getSourceUser(),msg.getContent(),msg.isGroupMsg(),msg.getSendTime());
+            System.out.println(msg);
+            if(msg.isGroupMsg()) {
+                this.mainWidget.setNewMessage(msg.getDest(),msg.getContent(),msg.isGroupMsg(),msg.getSendTime(),msg.getSourceUser());
+            } else {
+                this.mainWidget.setNewMessage(msg.getSourceUser(),msg.getContent(),msg.isGroupMsg(),msg.getSendTime(),msg.getSourceUser());
+            }
+
         } catch (Exception e) {
 //            e.printStackTrace();
             System.out.println(e.getStackTrace());

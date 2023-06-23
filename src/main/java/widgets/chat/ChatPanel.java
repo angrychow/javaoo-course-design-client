@@ -66,7 +66,8 @@ public class ChatPanel extends JPanel {
             params.put("to",controller.getNowChatUid());
             params.put("msg",ChatPanel.this.inputTextArea.getText());
             this.controller.handleEvent(Event.SEND_MESSAGE);
-            var resp = ClientHttp.Post(BaseUrl.GetUrl("/chat/send"),null,params);
+            HashMap<String,Object> resp;
+            resp = controller.getNowChatUid() <10000 ?ClientHttp.Post(BaseUrl.GetUrl("/chat/send"),null,params):ClientHttp.Post(BaseUrl.GetUrl("/group/send"),null,params);
             System.out.println(resp.toString());
         });
     }

@@ -30,8 +30,10 @@ public class AddFriendWidget {
             System.out.println(resp);
             resp = (HashMap<String, Object>) resp.get("body");
             if((int)resp.get("statusCode") == 200) {
-                Bus.friendList.add(new User("用户"+idTextField.getText(),Integer.parseInt(idTextField.getText())));
-                controller.handleEvent(Event.UPDATE_FRIEND_LIST);
+                var dialog = new JDialog();
+                dialog.add(new JLabel("添加成功"));
+                dialog.pack();
+                dialog.setVisible(true);
             }
         }));
     }

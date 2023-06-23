@@ -53,6 +53,10 @@ public class RequestManagement {
             System.out.println(resp);
             Bus.friendList.add(new User(name,id));
             controller.handleEvent(Event.UPDATE_FRIEND_LIST);
+            var dialog = new JDialog();
+            dialog.add(new JLabel("成功添加好友"));
+            dialog.pack();
+            dialog.setVisible(true);
             RequestManagement.this.UpdateRequest();
         });
         rejectButton.addActionListener((e)->{
@@ -66,6 +70,10 @@ public class RequestManagement {
             params.put("from",Bus.Uid);
             params.put("to",id);
             ClientHttp.Post(BaseUrl.GetUrl("/relation/deny"),null,params);
+            var dialog = new JDialog();
+            dialog.add(new JLabel("成功拒绝添加好友"));
+            dialog.pack();
+            dialog.setVisible(true);
             RequestManagement.this.UpdateRequest();
         });
     }
@@ -82,9 +90,12 @@ public class RequestManagement {
         request = (HashMap<String, Object>) request.get("body");
         this.requestMap = (ArrayList<HashMap<String,Object>>)request.get("data");
         System.out.println(request.toString());
-        requestComboBox.removeAll();
+//        requestComboBox.removeAll();
+        requestComboBox.removeAllItems();
         for(var e:requestMap) {
             requestComboBox.addItem((String)e.get("name"));
         }
+//        requestComboBox.updateUI();
+
     }
 }

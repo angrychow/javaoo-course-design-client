@@ -2,18 +2,18 @@ package widgets.main;
 
 import clientEnum.Event;
 import entity.DateString;
+import entity.Msg;
 import interfaces.Controller;
 import socket.ChatWebSocket;
-import utils.Bus;
-import utils.GetUser;
+import utils.*;
 import widgets.chat.ChatPanel;
 import widgets.userList.UserListPanel;
-import utils.LayoutTools;
 
 import javax.swing.*;
 import java.awt.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -36,7 +36,7 @@ public class MainWidget extends JFrame {
 
     public void updateFriendsList() {
         this.listPanel.updateUserList();
-        this.pack();
+//        this.pack();
     }
 
     public MainWidget(Controller c) {
@@ -83,11 +83,11 @@ public class MainWidget extends JFrame {
         handleFriendItem.addActionListener((e)->{
             controller.handleEvent(Event.OPEN_REQUEST_MANAGEMENT);
         });
-        this.createGroupItem = new JMenuItem("创建群组");
+        this.createGroupItem = new JMenuItem("创建群聊");
         createGroupItem.addActionListener((e)->{
             controller.handleEvent(Event.OPEN_CREATE_GROUP);
         });
-        this.joinGroupItem = new JMenuItem("加入群组");
+        this.joinGroupItem = new JMenuItem("管理群组");
         joinGroupItem.addActionListener((e)->{
             controller.handleEvent(Event.OPEN_JOIN_GROUP);
         });
@@ -102,6 +102,33 @@ public class MainWidget extends JFrame {
 
 
     public void showWidget() {
+
+        for(var e: Bus.friendList) {
+            var params = new HashMap<String,Object>();
+//            params.put("")
+            if(e.ID<10000) {
+                params.put("from",e.ID);
+                params.put("to",Bus.Uid);
+                var result = ClientHttp.Post(BaseUrl.GetUrl("/history/friend"),null,params);
+                result = (HashMap<String,Object>)result.get("body");
+                ArrayList<HashMap<String,Object>> data = (ArrayList<HashMap<String,Object>>)result.get("data");
+                System.out.println(data);
+                for(var ele: data) {
+                    setNewMessage((int)ele.get("sourceUser"),(String)ele.get("content"),(boolean)ele.get("groupMsg"),(String)ele.get("sendTime"),(int)ele.get("sourceUser"));
+                }
+            } else {
+                params.put("group",e.ID);
+                var result = ClientHttp.Post(BaseUrl.GetUrl("/history/group"),null,params);
+                result = (HashMap<String,Object>)result.get("body");
+                ArrayList<HashMap<String,Object>> data = (ArrayList<HashMap<String,Object>>)result.get("data");
+                System.out.println(data);
+                for(var ele: data) {
+                    setNewMessage((int)ele.get("dest"),(String)ele.get("content"),(boolean)ele.get("groupMsg"),(String)ele.get("sendTime"),(int)ele.get("sourceUser"));
+                }
+            }
+        }
+
+
         this.pack();
 //        this.setSize(500,500);
 //        this.setResizable(false);
@@ -124,7 +151,7 @@ public class MainWidget extends JFrame {
         this.mainPanel.updateUI();
     }
 
-    public void setNewMessage(int uid,String content,boolean isGroup,String sendTime) {
+    public void setNewMessage(int uid,String content,boolean isGroup,String sendTime,int realUid) {
 
 //        var format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.fff ");
 //        Date date = null;
@@ -134,17 +161,17 @@ public class MainWidget extends JFrame {
 
         if(this.listPanel.getSelectedUserId() == uid) {
             if(this.recordMap.containsKey(uid)) {
-                this.recordMap.replace(uid,this.recordMap.get(uid)+'\n'+ GetUser.getName(uid)+" "+displayDateString+"\n"+content+"\n\n");
+                this.recordMap.replace(uid,this.recordMap.get(uid)+'\n'+ GetUser.getName(realUid)+" "+displayDateString+"\n"+content+"\n\n");
             } else {
-                this.recordMap.put(uid, GetUser.getName(uid)+" "+displayDateString+"\n"+content+"\n\n");
+                this.recordMap.put(uid, GetUser.getName(realUid)+" "+displayDateString+"\n"+content+"\n\n");
             }
             this.chatPanel.replaceText(this.recordMap.get(uid));
         } else {
             this.listPanel.setSelectedById(uid);
             if(this.recordMap.containsKey(uid)) {
-                this.recordMap.replace(uid,this.recordMap.get(uid)+'\n'+ GetUser.getName(uid)+" "+displayDateString+"\n"+content+"\n\n");
+                this.recordMap.replace(uid,this.recordMap.get(uid)+'\n'+ GetUser.getName(realUid)+" "+displayDateString+"\n"+content+"\n\n");
             } else {
-                this.recordMap.put(uid, GetUser.getName(uid)+" "+displayDateString+"\n"+content+"\n\n");
+                this.recordMap.put(uid, GetUser.getName(realUid)+" "+displayDateString+"\n"+content+"\n\n");
             }
             this.chatPanel.replaceText(this.recordMap.get(uid));
         }
@@ -169,13 +196,15 @@ public class MainWidget extends JFrame {
         var content = this.chatPanel.getChatText();
         this.chatPanel.clearChatText();
         int uid = this.listPanel.getSelectedUserId();
-        this.chatPanel.appendText(Bus.UserName+" "+displayDateString+"\n"+content+"\n\n");
-        if(this.recordMap.containsKey(uid)) {
-            this.recordMap.replace(uid,this.recordMap.get(uid)+'\n'+ Bus.UserName+" "+displayDateString+"\n"+content+"\n\n");
-        } else {
-            this.recordMap.put(uid, Bus.UserName+" "+displayDateString+"\n"+content+"\n\n");
+        if(uid<10000) {
+            this.chatPanel.appendText(Bus.UserName+" "+displayDateString+"\n"+content+"\n\n");
+            if(this.recordMap.containsKey(uid)) {
+                this.recordMap.replace(uid,this.recordMap.get(uid)+'\n'+ Bus.UserName+" "+displayDateString+"\n"+content+"\n\n");
+            } else {
+                this.recordMap.put(uid, Bus.UserName+" "+displayDateString+"\n"+content+"\n\n");
+            }
+            this.chatPanel.replaceText(this.recordMap.get(uid));
         }
-        this.chatPanel.replaceText(this.recordMap.get(uid));
     }
 
     public void updateFriendList() {

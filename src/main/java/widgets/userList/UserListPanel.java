@@ -77,6 +77,8 @@ public class UserListPanel extends JPanel {
         return idReturn.get();
     }
     public void setSelectedById(int id) {
+
+
         var temp = this.userListData.toArray();
         String name = null;
         int idx = 0;
@@ -85,7 +87,10 @@ public class UserListPanel extends JPanel {
                 name = e.name;
             }
         }
+        System.out.println(userListData);
+        System.out.println(userListData.toArray().length);
         for(int i=0;i<temp.length;i++) {
+            System.out.println(i+" "+temp[i]);
             if(temp[i].equals(name)) {
                 idx = i;
             }
@@ -94,7 +99,8 @@ public class UserListPanel extends JPanel {
     }
 
     public void updateUserList() {
-        var userListData = new ArrayList<String>();
+        var idx = this.userList.getSelectedIndex();
+        this.userListData = new ArrayList<String>();
         for(User e:Bus.friendList) {
             userListData.add(e.name);
         }
@@ -102,7 +108,8 @@ public class UserListPanel extends JPanel {
         System.out.println(userListData);
 //        this.scrollPane = new JScrollPane(userList);
 //        this.add(scrollPane,BorderLayout.CENTER);
-        this.userList.updateUI();
+//        this.userList.updateUI();
+        this.userList.setSelectedIndex(idx);
     }
 }
 

@@ -9,6 +9,19 @@ public class WebSocketMsg {
     private int sourceUser;
     private int viewed;
 
+    @Override
+    public String toString() {
+        return "WebSocketMsg{" +
+                "content='" + content + '\'' +
+                ", dest=" + dest +
+                ", groupMsg=" + groupMsg +
+                ", id=" + id +
+                ", sendTime='" + sendTime + '\'' +
+                ", sourceUser=" + sourceUser +
+                ", viewed=" + viewed +
+                '}';
+    }
+
     public String getContent() {
         return content;
     }
