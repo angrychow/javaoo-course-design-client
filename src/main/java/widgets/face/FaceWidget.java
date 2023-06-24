@@ -54,7 +54,13 @@ import static org.bytedeco.opencv.global.opencv_core.*;
 
 public class FaceWidget {
 
-    public FaceWidget(int id) throws Exception {
+    /**
+     * @param name 用户id
+     * @param mode 0: 人脸识别 1: 人脸注册
+     * @throws Exception 同login接口
+     */
+    public FaceWidget(String name, int mode) throws Exception {
+
         String classifierName = "haarcascade_frontalface_alt.xml";
 
         CascadeClassifier classifier = new CascadeClassifier(classifierName);
@@ -98,7 +104,7 @@ public class FaceWidget {
         int count = 0;
         ArrayList<String> facesEncode = new ArrayList<String>();
         int interval = 0;
-        while ((grabbedImage = converter.convert(grabber.grab())) != null && count <= 10) {
+        while ((grabbedImage = converter.convert(grabber.grab())) != null && count < 20) {
             cvtColor(grabbedImage, grayImage, CV_BGR2GRAY);
             RectVector faces = new RectVector();
             classifier.detectMultiScale(grayImage, faces);
@@ -134,7 +140,8 @@ public class FaceWidget {
                 buffer = faceImg;
                 cvtColor(faceImg, faceImg, CV_BGR2GRAY);
 
-                if (interval == 5) {
+
+                if ((interval == 3 && mode == 1) || (interval == 1 && mode == 0)) {
                     interval = 0;
                     count++;
 
@@ -171,9 +178,13 @@ public class FaceWidget {
 
         HashMap<String, Object> res = new HashMap<>();
         System.out.println(facesEncode.size());
-        res.put("id", id);
+        res.put("name", name);
         res.put("faceImages", facesEncode);
-        ClientHttp.Post(BaseUrl.GetUrl("/face/register"), res, null);
+        if (mode == 1) {
+            ClientHttp.Post(BaseUrl.GetUrl("/face/register"), res, null);
+        } else {
+            ClientHttp.Post(BaseUrl.GetUrl("/face/login"), res, null);
+        }
         mainFrame.dispose();
         grabber.stop();
     }

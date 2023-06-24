@@ -47,7 +47,7 @@ public class MainController implements Controller {
         this.createGroupWidget = new CreateGroupWidget(this);
         this.joinGroupWidget = new JoinGroupWidget(this);
         try {
-            this.faceWidget = new FaceWidget(12345);
+            this.faceWidget = new FaceWidget("squidward", 0);
 
         } catch (Exception e) {
             e.printStackTrace();
