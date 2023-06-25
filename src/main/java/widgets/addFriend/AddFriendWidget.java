@@ -8,14 +8,18 @@ import utils.Bus;
 import utils.ClientHttp;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import static utils.LayoutTools.setWindowCenter;
 
 public class AddFriendWidget {
     private JPanel panel1;
     private JTextField idTextField;
     private JButton addButton;
     private JList userList;
+    private JScrollPane scroll;
     private JFrame frame;
     private Controller controller;
     private ArrayList<User> users;
@@ -35,7 +39,9 @@ public class AddFriendWidget {
             if((int)resp.get("statusCode") == 200) {
                 var dialog = new JDialog();
                 dialog.add(new JLabel("添加成功"));
-                dialog.pack();
+                dialog.setSize(200, 100);
+                setWindowCenter(dialog);
+//                dialog.pack();
                 dialog.setVisible(true);
             }
         }));
@@ -53,7 +59,11 @@ public class AddFriendWidget {
 
     public void showWidget() {
         update();
-        frame.pack();
+//        frame.pack();
+        frame.setSize(new Dimension(400, 300));
+
+        // 设置窗口位置
+        setWindowCenter(frame);
         frame.setVisible(true);
     }
 

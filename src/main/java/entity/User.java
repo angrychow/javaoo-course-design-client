@@ -18,9 +18,6 @@ public class User {
 
     @Override
     public String toString() {
-        return "用户:" +
-                "昵称是" + name  +
-                ", ID 是" + ID +
-                '.';
+        return String.format("%-4d %s", ID, name);
     }
 }

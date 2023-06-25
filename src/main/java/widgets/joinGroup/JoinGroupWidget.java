@@ -10,6 +10,8 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static utils.LayoutTools.setWindowCenter;
+
 public class JoinGroupWidget {
     private JList groupList;
     private JPanel joinGroupMainPanel;
@@ -33,17 +35,19 @@ public class JoinGroupWidget {
         }
         this.groupList.setListData(mock.toArray());
 
-        joinButton.addActionListener((e)->{
-            HashMap<String,Object> params = new HashMap<>();
+        joinButton.addActionListener((e)-> {
+            HashMap<String, Object> params = new HashMap<>();
             var dialog = new JDialog();
+            dialog.setSize(200, 100);
+            setWindowCenter(dialog);
             dialog.setModal(false);
-            params.put("from",Bus.Uid);
+            params.put("from", Bus.Uid);
             var name = nameTextField.getText();
             var toUid = -1;
             var groupName = groupList.getSelectedValue();
-            var groupId= -1;
-            for(var m:Bus.friendList) {
-                if(m.name.equals(name)) {
+            var groupId = -1;
+            for (var m : Bus.friendList) {
+                if (m.name.equals(name)) {
                     toUid = m.ID;
                 }
                 if(m.name.equals(groupName)) {
@@ -53,7 +57,7 @@ public class JoinGroupWidget {
 
             if(toUid == -1 || groupId == -1) {
                 dialog.add(new JLabel("您没有这个好友或者你没有选中群聊"));
-                dialog.pack();
+//                dialog.pack();
                 dialog.setVisible(true);
             } else {
                 params.put("invite",toUid);
@@ -62,34 +66,36 @@ public class JoinGroupWidget {
                 System.out.println(result);
                 if(result.get("statusCode").equals(200)) {
                     dialog.add(new JLabel("添加成功"));
-                    dialog.pack();
+//                    dialog.pack();
                     dialog.setVisible(true);
                     controller.handleEvent(Event.UPDATE_FRIEND_LIST);
                 } else {
                     dialog.add(new JLabel("添加失败"));
-                    dialog.pack();
+//                    dialog.pack();
                     dialog.setVisible(true);
                 }
             }
 
         });
 
-        upgradeButton.addActionListener((e)->{
-            HashMap<String,Object> params = new HashMap<>();
+        upgradeButton.addActionListener((e)-> {
+            HashMap<String, Object> params = new HashMap<>();
             var dialog = new JDialog();
+            dialog.setSize(200, 100);
+            setWindowCenter(dialog);
             dialog.setModal(false);
-            params.put("owner",Bus.Uid);
+            params.put("owner", Bus.Uid);
             var groupName = groupList.getSelectedValue();
-            var groupId= -1;
-            for(var m:Bus.friendList) {
-                if(m.name.equals(groupName)) {
+            var groupId = -1;
+            for (var m : Bus.friendList) {
+                if (m.name.equals(groupName)) {
                     groupId = m.ID;
                 }
             }
 
             if(groupId == -1) {
                 dialog.add(new JLabel("你没有选中群聊"));
-                dialog.pack();
+//                dialog.pack();
                 dialog.setVisible(true);
             } else {
                 params.put("groupId",groupId);
@@ -97,34 +103,36 @@ public class JoinGroupWidget {
                 System.out.println(result);
                 if(result.get("statusCode").equals(200)) {
                     dialog.add(new JLabel("升级成功"));
-                    dialog.pack();
+//                    dialog.pack();
                     dialog.setVisible(true);
                     controller.handleEvent(Event.UPDATE_FRIEND_LIST);
                 } else {
                     dialog.add(new JLabel("升级失败，因为你不是群主"));
-                    dialog.pack();
+//                    dialog.pack();
                     dialog.setVisible(true);
                 }
             }
         });
 
 
-        exitButton.addActionListener((e)->{
-            HashMap<String,Object> params = new HashMap<>();
+        exitButton.addActionListener((e)-> {
+            HashMap<String, Object> params = new HashMap<>();
             var dialog = new JDialog();
+            dialog.setSize(200, 100);
+            setWindowCenter(dialog);
             dialog.setModal(false);
-            params.put("user",Bus.Uid);
+            params.put("user", Bus.Uid);
             var groupName = groupList.getSelectedValue();
-            var groupId= -1;
-            for(var m:Bus.friendList) {
-                if(m.name.equals(groupName)) {
+            var groupId = -1;
+            for (var m : Bus.friendList) {
+                if (m.name.equals(groupName)) {
                     groupId = m.ID;
                 }
             }
 
             if(groupId == -1) {
                 dialog.add(new JLabel("你没有选中群聊"));
-                dialog.pack();
+//                dialog.pack();
                 dialog.setVisible(true);
             } else {
                 params.put("group",groupId);
@@ -132,12 +140,12 @@ public class JoinGroupWidget {
                 System.out.println(result);
                 if(result.get("statusCode").equals(200)) {
                     dialog.add(new JLabel("离开成功"));
-                    dialog.pack();
+//                    dialog.pack();
                     dialog.setVisible(true);
                     controller.handleEvent(Event.UPDATE_FRIEND_LIST);
                 } else {
                     dialog.add(new JLabel("离开失败"));
-                    dialog.pack();
+//                    dialog.pack();
                     dialog.setVisible(true);
                 }
             }
@@ -146,15 +154,19 @@ public class JoinGroupWidget {
 
     }
 
-    public void showWidget(){
+    public void showWidget() {
         var mock = new ArrayList<String>();
-        for(var e:Bus.friendList) {
-            if(e.ID>=10000) {
+        for (var e : Bus.friendList) {
+            if (e.ID >= 10000) {
                 mock.add(e.name);
             }
         }
         this.groupList.setListData(mock.toArray());
+        this.joinGroupMainPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+
         frame.pack();
+        setWindowCenter(frame);
+
         frame.setVisible(true);
     }
 

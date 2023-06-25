@@ -8,6 +8,8 @@ import utils.ClientHttp;
 import javax.swing.*;
 import java.util.HashMap;
 
+import static utils.LayoutTools.setWindowCenter;
+
 public class CreateGroupWidget {
     private JTextField gourpNameTextField;
     private JComboBox groupTypeComboBox;
@@ -44,7 +46,8 @@ public class CreateGroupWidget {
                 System.out.println(resp);
                 var dialog = new JDialog();
                 dialog.add(new JLabel("创建成功"));
-                dialog.pack();
+                dialog.setSize(200, 100);
+                setWindowCenter(dialog);
                 dialog.setModal(false);
                 dialog.setVisible(true);
             }
@@ -52,10 +55,13 @@ public class CreateGroupWidget {
     }
 
     public void showWidget() {
-        for(var e: Bus.friendList) {
-            if(e.ID<10000)groupTypeComboBox.addItem(e.name);
+        for (var e : Bus.friendList) {
+            if (e.ID < 10000) groupTypeComboBox.addItem(e.name);
         }
+        setWindowCenter(frame);
+        this.mainPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
         frame.pack();
+
         frame.setVisible(true);
     }
 }

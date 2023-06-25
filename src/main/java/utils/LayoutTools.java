@@ -4,6 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 
 public class LayoutTools {
+
+    private static final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
     /**
      * 添加组件到GridBag容器中
      *
@@ -52,5 +55,22 @@ public class LayoutTools {
         gbc.weighty = weighty;
         gbc.fill = fill;
         p.add(c, gbc);
+    }
+
+    public static int getWindowX(int width) {
+
+        return (int) (screenSize.getWidth() - width) / 2;
+    }
+
+    public static int getWindowY(int height) {
+        return (int) (screenSize.getHeight() - height) / 2;
+    }
+
+    public static void setWindowCenter(JFrame frame) {
+        frame.setLocation(getWindowX(frame.getWidth()), getWindowY(frame.getHeight()));
+    }
+
+    public static void setWindowCenter(JDialog dialog) {
+        dialog.setLocation(getWindowX(dialog.getWidth()), getWindowY(dialog.getHeight()));
     }
 }

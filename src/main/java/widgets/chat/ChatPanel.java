@@ -33,6 +33,9 @@ public class ChatPanel extends JPanel {
 
         this.name = new JLabel(name);
         LayoutTools.addItem(this, this.name, 0, 0, 1, 1, 1, 0.1);
+        this.name.setHorizontalAlignment(JLabel.CENTER);
+        Font font = new Font(this.name.getFont().getName(), Font.BOLD, 15);
+        this.name.setFont(font);
 
         this.recordTextArea = new JTextArea();
         this.recordTextArea.setLineWrap(true);
@@ -40,6 +43,7 @@ public class ChatPanel extends JPanel {
         this.recordTextArea.setEditable(false);
 
         this.recordScrollPane = new JScrollPane(this.recordTextArea);
+        recordScrollPane.setPreferredSize(recordScrollPane.getPreferredSize());
         Insets i = new Insets(10, 0, 10, 0);
         LayoutTools.addItem(this, this.recordScrollPane, 0, 1, 1, 1, 1, 0.5, i);
 

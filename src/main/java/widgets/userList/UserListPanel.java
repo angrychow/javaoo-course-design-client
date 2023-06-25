@@ -52,7 +52,8 @@ public class UserListPanel extends JPanel {
         this.userList.setListData(userListData.toArray());
 
         this.scrollPane = new JScrollPane(userList);
-        this.add(scrollPane,BorderLayout.CENTER);
+        this.scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        this.add(scrollPane, BorderLayout.CENTER);
         this.userList.addListSelectionListener((e)->{
             UserListPanel.this.controller.handleEvent(Event.USERLIST_CHANGE);
         });
@@ -117,7 +118,8 @@ class UserListRenderer extends DefaultListCellRenderer {
     @Override
     public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-        label.setHorizontalAlignment(SwingConstants.CENTER);
+//        label.setHorizontalAlignment(SwingConstants.CENTER);
+        setHorizontalAlignment(LEFT);
         label.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         return label;
     }

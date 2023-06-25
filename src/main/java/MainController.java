@@ -22,6 +22,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static utils.LayoutTools.setWindowCenter;
+
 public class MainController implements Controller {
     private ChatWebSocketManager webSocketManager;
     private LoginWidget loginWidget;
@@ -64,6 +66,7 @@ public class MainController implements Controller {
                 this.mainWidget.updateFriendsList();
                 this.loginWidget.hideWidget();
                 this.mainWidget.showWidget();
+//                var exit = false;
                 new Thread(()->{
                     while(true) {
                         var tempFriendList = new ArrayList<User>();
@@ -71,32 +74,50 @@ public class MainController implements Controller {
                         friendsParams.put("user", Bus.Uid);
                         var friendsResult = ClientHttp.Post(BaseUrl.GetUrl("/relation/friends"),null,friendsParams);
                         if(friendsResult.get("statusCode").equals(200)) {
-                            var friendsRawList = (ArrayList<HashMap<String,Object>>)((HashMap<String,Object>)friendsResult.get("body")).get("data");
+                            var code = (int) ((HashMap<String, Object>) friendsResult.get("body")).get("statusCode");
+
+                            var friendsRawList = (ArrayList<HashMap<String, Object>>) ((HashMap<String, Object>) friendsResult.get("body")).get("data");
 //                        System.out.println(friendsRawList);
-                            friendsRawList.stream().forEach((item)->{
-                                var ret = new User((String)item.get("name"),(int)item.get("id"));
+                            friendsRawList.stream().forEach((item) -> {
+                                var ret = new User((String) item.get("name"), (int) item.get("id"));
 //                            ret.name = (String)item.get("name");
 //                            ret.
 //                            return ret;
                                 tempFriendList.add(ret);
                             });
                             System.out.println(Bus.friendList);
+                        } else if (friendsResult.get("statusCode").equals(401)) {
+                            var dialog = new JDialog();
+                            dialog.setTitle("登录过期");
+                            dialog.add(new JLabel("登录过期或者您的账号在别的设备登陆，请重新登录"));
+//                            dialog.pack();
+                            dialog.setSize(400, 100);
+                            setWindowCenter(dialog);
+                            dialog.setVisible(true);
+                            try {
+                                Thread.sleep(5000);
+                            } catch (InterruptedException ex) {
+                                throw new RuntimeException(ex);
+                            }
+                            System.exit(0);
                         }
                         var groupsResult = ClientHttp.Post(BaseUrl.GetUrl("/group/groups"),null,friendsParams);
                         if(friendsResult.get("statusCode").equals(200)) {
                             var groupsRawList = (ArrayList<HashMap<String,Object>>)((HashMap<String,Object>)groupsResult.get("body")).get("data");
                             groupsRawList.stream().forEach((item)->{
-                                var isGroupCreator= "等级 "+item.get("level")+" ";
-                                if((int)item.get("owner") == Bus.Uid) {
-                                    isGroupCreator += "(群主)";
+                                var isGroupCreator = "等级" + item.get("level") + " ";
+                                if ((int) item.get("owner") == Bus.Uid) {
+                                    isGroupCreator = "(群主)" + isGroupCreator;
+                                } else {
+                                    isGroupCreator = "(群员)" + isGroupCreator;
                                 }
-                                var ret = new User((String)item.get("groupName")+isGroupCreator,(int)item.get("id"));
+                                var ret = new User(String.format(isGroupCreator + item.get("groupName"), (int) item.get("id")));
                                 tempFriendList.add(ret);
                             });
                             System.out.println(Bus.friendList);
                         }
                         Bus.friendList = tempFriendList;
-                        MainController.this.handleEvent(Event.UPDATE_FRIEND_LIST);// 每 10 秒更新一次好友列表
+                        MainController.this.handleEvent(Event.UPDATE_FRIEND_LIST);// 每 3 秒更新一次好友列表
                         try {
                             Thread.sleep(3000);
                         } catch (InterruptedException ex) {

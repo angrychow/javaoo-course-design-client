@@ -8,9 +8,12 @@ import utils.Bus;
 import utils.ClientHttp;
 
 import javax.swing.*;
+import java.awt.*;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import static utils.LayoutTools.setWindowCenter;
 
 public class RequestManagement {
     private JPanel panel1;
@@ -19,7 +22,7 @@ public class RequestManagement {
     private JButton rejectButton;
     private JFrame frame;
     private Controller controller;
-    private ArrayList<HashMap<String,Object>> requestMap;
+    private ArrayList<HashMap<String, Object>> requestMap;
 
 //    public static void main(String[] args) {
 //        JFrame frame = new JFrame("RequestManagement");
@@ -32,10 +35,10 @@ public class RequestManagement {
 
 
         this.controller = c;
-        this.frame = new JFrame("RequestManagement");
+        this.frame = new JFrame("好友请求");
         frame.setContentPane(this.panel1);
         frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        frame.pack();
+//        frame.pack();
         agreeButton.addActionListener((e)->{
             int id = -1;
             String name = "";
@@ -45,34 +48,38 @@ public class RequestManagement {
                     name = (String)(ele.get("name"));
                 }
             }
-            var params = new HashMap<String,Object>();
-            params.put("from",id);
-            params.put("to",Bus.Uid);
+            var params = new HashMap<String, Object>();
+            params.put("from", id);
+            params.put("to", Bus.Uid);
             System.out.println(params);
-            var resp = ClientHttp.Post(BaseUrl.GetUrl("/relation/access"),null,params);
+            var resp = ClientHttp.Post(BaseUrl.GetUrl("/relation/access"), null, params);
             System.out.println(resp);
-            Bus.friendList.add(new User(name,id));
+            Bus.friendList.add(new User(name, id));
             controller.handleEvent(Event.UPDATE_FRIEND_LIST);
             var dialog = new JDialog();
             dialog.add(new JLabel("成功添加好友"));
-            dialog.pack();
+//            dialog.pack();
+            dialog.setSize(200, 100);
+            setWindowCenter(dialog);
             dialog.setVisible(true);
             RequestManagement.this.UpdateRequest();
         });
         rejectButton.addActionListener((e)->{
             int id = -1;
             for(var ele:requestMap) {
-                if(((String)(ele.get("name"))).equals(requestComboBox.getSelectedItem())) {
-                    id = (int)ele.get("id");
+                if (((String) (ele.get("name"))).equals(requestComboBox.getSelectedItem())) {
+                    id = (int) ele.get("id");
                 }
             }
-            var params = new HashMap<String,Object>();
-            params.put("from",Bus.Uid);
-            params.put("to",id);
-            ClientHttp.Post(BaseUrl.GetUrl("/relation/deny"),null,params);
+            var params = new HashMap<String, Object>();
+            params.put("from", Bus.Uid);
+            params.put("to", id);
+            ClientHttp.Post(BaseUrl.GetUrl("/relation/deny"), null, params);
             var dialog = new JDialog();
             dialog.add(new JLabel("成功拒绝添加好友"));
-            dialog.pack();
+//            dialog.pack();
+            dialog.setSize(200, 100);
+            setWindowCenter(dialog);
             dialog.setVisible(true);
             RequestManagement.this.UpdateRequest();
         });
@@ -80,6 +87,11 @@ public class RequestManagement {
 
     public void ShowWidget() {
         UpdateRequest();
+        frame.setSize(new Dimension(300, 150));
+
+        this.panel1.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        // 设置窗口位置
+        setWindowCenter(frame);
         frame.setVisible(true);
     }
 

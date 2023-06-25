@@ -45,7 +45,7 @@ public class MainWidget extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.recordMap = new HashMap<>();
 //        this.setSize(400, 400);
-        this.pack();
+//        this.pack();
         this.controller = c;
 
         // 布局
@@ -61,15 +61,14 @@ public class MainWidget extends JFrame {
 
         // 好友列表
         this.listPanel = new UserListPanel(c);
-//        this.listPanel.setSize(200,500);
-        LayoutTools.addItem(mainPanel, listPanel, 0, 0, 1, 1, 1, 1,GridBagConstraints.BOTH);
 
+        LayoutTools.addItem(mainPanel, listPanel, 0, 0, 1, 1, 0.8, 1, GridBagConstraints.BOTH);
 
 
         // 对话者姓名
-        this.chatPanel = new ChatPanel(" ",this.controller);
-        this.chatPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        LayoutTools.addItem(mainPanel, chatPanel, 1, 0, GridBagConstraints.REMAINDER, 1, 4, 1,GridBagConstraints.BOTH);
+        this.chatPanel = new ChatPanel(" ", this.controller);
+        this.chatPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        LayoutTools.addItem(mainPanel, chatPanel, 1, 0, GridBagConstraints.REMAINDER, 1, 4, 0.2, GridBagConstraints.BOTH);
 
         // 菜单栏
 
@@ -78,7 +77,7 @@ public class MainWidget extends JFrame {
         this.groupMenu = new JMenu("群组");
         this.addFriendItem = new JMenuItem("添加好友");
         this.handleFriendItem = new JMenuItem("处理好友申请");
-        addFriendItem.addActionListener((e)->{
+        addFriendItem.addActionListener((e) -> {
             controller.handleEvent(Event.OPEN_ADD_FRIEND);
         });
         handleFriendItem.addActionListener((e)->{
@@ -138,18 +137,20 @@ public class MainWidget extends JFrame {
                 result = (HashMap<String,Object>)result.get("body");
                 ArrayList<HashMap<String,Object>> data = (ArrayList<HashMap<String,Object>>)result.get("data");
                 System.out.println(data);
-                for(var ele: data) {
-                    setNewMessage((int)ele.get("dest"),(String)ele.get("content"),(boolean)ele.get("groupMsg"),(String)ele.get("sendTime"),(int)ele.get("sourceUser"));
+                for (var ele : data) {
+                    setNewMessage((int) ele.get("dest"), (String) ele.get("content"), (boolean) ele.get("groupMsg"), (String) ele.get("sendTime"), (int) ele.get("sourceUser"));
                 }
             }
         }
 
 
-        this.pack();
+//        this.pack();
 //        this.setSize(500,500);
 //        this.setResizable(false);
+        this.setSize(new Dimension(1000, 600));
+        LayoutTools.setWindowCenter(this);
         this.setVisible(true);
-        this.mainPanel.updateUI();
+//        this.mainPanel.updateUI();
     }
 
     public String getSelectedUser() {
@@ -164,7 +165,7 @@ public class MainWidget extends JFrame {
 //        this.chatPanel = new ChatPanel(name,this.controller);
 //        Insets i = new Insets(0, 10, 0, 0);
 //        LayoutTools.addItem(mainPanel, chatPanel, 1, 0, GridBagConstraints.REMAINDER, 1, 4, 1, GridBagConstraints.BOTH);
-        this.mainPanel.updateUI();
+//        this.mainPanel.updateUI();
     }
 
     public void setNewMessage(int uid,String content,boolean isGroup,String sendTime,int realUid) {
