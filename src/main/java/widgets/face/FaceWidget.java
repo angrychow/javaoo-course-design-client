@@ -235,11 +235,13 @@ public class FaceWidget {
                     if(friendsResult.get("statusCode").equals(200)) {
                         var groupsRawList = (ArrayList<HashMap<String,Object>>)((HashMap<String,Object>)groupsResult.get("body")).get("data");
                         groupsRawList.stream().forEach((item)->{
-                            var isGroupCreator= "等级 "+item.get("level")+" ";
-                            if((int)item.get("owner") == Bus.Uid) {
-                                isGroupCreator += "(群主)";
+                            var isGroupCreator = "等级" + item.get("level") + " ";
+                            if ((int) item.get("owner") == Bus.Uid) {
+                                isGroupCreator = "(群主)" + isGroupCreator;
+                            } else {
+                                isGroupCreator = "(群员)" + isGroupCreator;
                             }
-                            var ret = new User((String)item.get("groupName")+isGroupCreator,(int)item.get("id"));
+                            var ret = new User(isGroupCreator + item.get("groupName"), (int) item.get("id"));
                             Bus.friendList.add(ret);
                         });
                         System.out.println(Bus.friendList);

@@ -74,8 +74,23 @@ public class MainController implements Controller {
                         friendsParams.put("user", Bus.Uid);
                         var friendsResult = ClientHttp.Post(BaseUrl.GetUrl("/relation/friends"),null,friendsParams);
                         if(friendsResult.get("statusCode").equals(200)) {
-                            var code = (int) ((HashMap<String, Object>) friendsResult.get("body")).get("statusCode");
 
+                            var code = (int) ((HashMap<String, Object>) friendsResult.get("body")).get("statusCode");
+                            if (code == 401) {
+                                var dialog = new JDialog();
+                                dialog.setTitle("登录过期");
+                                dialog.add(new JLabel("登录过期或者您的账号在别的设备登陆，请重新登录"));
+//                            dialog.pack();
+                                dialog.setSize(400, 100);
+                                setWindowCenter(dialog);
+                                dialog.setVisible(true);
+                                try {
+                                    Thread.sleep(5000);
+                                } catch (InterruptedException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                                System.exit(0);
+                            }
                             var friendsRawList = (ArrayList<HashMap<String, Object>>) ((HashMap<String, Object>) friendsResult.get("body")).get("data");
 //                        System.out.println(friendsRawList);
                             friendsRawList.stream().forEach((item) -> {
@@ -86,20 +101,6 @@ public class MainController implements Controller {
                                 tempFriendList.add(ret);
                             });
                             System.out.println(Bus.friendList);
-                        } else if (friendsResult.get("statusCode").equals(401)) {
-                            var dialog = new JDialog();
-                            dialog.setTitle("登录过期");
-                            dialog.add(new JLabel("登录过期或者您的账号在别的设备登陆，请重新登录"));
-//                            dialog.pack();
-                            dialog.setSize(400, 100);
-                            setWindowCenter(dialog);
-                            dialog.setVisible(true);
-                            try {
-                                Thread.sleep(5000);
-                            } catch (InterruptedException ex) {
-                                throw new RuntimeException(ex);
-                            }
-                            System.exit(0);
                         }
                         var groupsResult = ClientHttp.Post(BaseUrl.GetUrl("/group/groups"),null,friendsParams);
                         if(friendsResult.get("statusCode").equals(200)) {
@@ -111,11 +112,13 @@ public class MainController implements Controller {
                                 } else {
                                     isGroupCreator = "(群员)" + isGroupCreator;
                                 }
-                                var ret = new User(String.format(isGroupCreator + item.get("groupName"), (int) item.get("id")));
+                                var ret = new User(isGroupCreator + item.get("groupName"), (int) item.get("id"));
                                 tempFriendList.add(ret);
                             });
                             System.out.println(Bus.friendList);
                         }
+
+
                         Bus.friendList = tempFriendList;
                         MainController.this.handleEvent(Event.UPDATE_FRIEND_LIST);// 每 3 秒更新一次好友列表
                         try {
