@@ -89,6 +89,18 @@
               <text value="注册"/>
             </properties>
           </component>
+          <component id="9163f" class="javax.swing.JButton" binding="faceLoginButton">
+            <constraints/>
+            <properties>
+              <text value="人脸登录"/>
+            </properties>
+          </component>
+          <component id="96b37" class="javax.swing.JButton" binding="faceRegisterButton">
+            <constraints/>
+            <properties>
+              <text value="人脸注册"/>
+            </properties>
+          </component>
         </children>
       </grid>
     </children>

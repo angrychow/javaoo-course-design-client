@@ -14,6 +14,7 @@ import java.awt.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -112,9 +113,24 @@ public class MainWidget extends JFrame {
                 var result = ClientHttp.Post(BaseUrl.GetUrl("/history/friend"),null,params);
                 result = (HashMap<String,Object>)result.get("body");
                 ArrayList<HashMap<String,Object>> data = (ArrayList<HashMap<String,Object>>)result.get("data");
+
+//                var params2 = new HashMap<String,Object>();
+//                params2.put("from",Bus.Uid);
+//                params2.put("to",e.ID);
+//                var result2 = ClientHttp.Post(BaseUrl.GetUrl("/history/friend"),null,params2);
+//                System.out.println(result2);
+//                result2 = (HashMap<String,Object>)result2.get("body");
+//                ArrayList<HashMap<String,Object>> data2 = (ArrayList<HashMap<String,Object>>)result2.get("data");
+//                System.out.println(data);
+//                System.out.println(data2);
+//                data.addAll(data2);
+                data.sort((a,b)->((String)a.get("sendTime")).compareTo((String)b.get("sendTime")));
+//                var temp = (HashMap<String,Object>[])(data.toArray());
+//                Arrays.sort(temp,(a,b)->((String)b.get("sendTime")).compareTo((String)a.get("sendTime")));
                 System.out.println(data);
+                System.out.println("********************\n********************\n********************\n********************");
                 for(var ele: data) {
-                    setNewMessage((int)ele.get("sourceUser"),(String)ele.get("content"),(boolean)ele.get("groupMsg"),(String)ele.get("sendTime"),(int)ele.get("sourceUser"));
+                    setNewMessage(e.ID,(String)ele.get("content"),(boolean)ele.get("groupMsg"),(String)ele.get("sendTime"),(int)ele.get("sourceUser"));
                 }
             } else {
                 params.put("group",e.ID);
@@ -192,7 +208,8 @@ public class MainWidget extends JFrame {
 
     public void handleSendText() {
         var date = new Date();
-        var displayDateString = date.getMonth() +"月"+date.getDate()+"日 "+date.getHours()+":"+date.getMinutes();
+        var displayDateString = (date.getMonth()+1) +"月"+date.getDate()+"日 "+date.getHours()+":"+date.getMinutes();
+        System.out.println(displayDateString);
         var content = this.chatPanel.getChatText();
         this.chatPanel.clearChatText();
         int uid = this.listPanel.getSelectedUserId();

@@ -1,5 +1,8 @@
 package widgets.face;
 
+import clientEnum.Event;
+import entity.User;
+import interfaces.Controller;
 import org.bytedeco.javacv.CanvasFrame;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.OpenCVFrameConverter;
@@ -28,7 +31,9 @@ import org.bytedeco.opencv.opencv_calib3d.*;
 import org.bytedeco.opencv.opencv_objdetect.*;
 import org.bytedeco.opencv.opencv_face.*;
 import utils.BaseUrl;
+import utils.Bus;
 import utils.ClientHttp;
+import widgets.login.LoginWidget;
 
 
 import javax.swing.*;
@@ -59,7 +64,7 @@ public class FaceWidget {
      * @param mode 0: 人脸识别 1: 人脸注册
      * @throws Exception 同login接口
      */
-    public FaceWidget(String name, int mode) throws Exception {
+    public FaceWidget(String name, int mode, Controller controller) throws Exception {
 
         String classifierName = "haarcascade_frontalface_alt.xml";
 
@@ -181,9 +186,79 @@ public class FaceWidget {
         res.put("name", name);
         res.put("faceImages", facesEncode);
         if (mode == 1) {
-            ClientHttp.Post(BaseUrl.GetUrl("/face/register"), res, null);
+            var result =ClientHttp.Post(BaseUrl.GetUrl("/face/register"), res, null);
+            var dialog = new JDialog();
+            if(result.get("statusCode").equals(200)) {
+                var resultBody = (HashMap<String,Object>)result.get("body");
+                if(resultBody.get("statusCode").equals(200)) {
+                    // LoginWidget.this.controller.handleEvent(Event.LOGIN_SUCCESS);
+                    dialog.setTitle("Success!");
+                    dialog.add(new JLabel("注册成功！！"));
+                    dialog.pack();
+                    dialog.setVisible(true);
+                } else {
+                    dialog.add(new JLabel("错误："+resultBody.get("data")));
+                    dialog.pack();
+                    dialog.setVisible(true);
+                }
+            } else {
+                dialog.add(new JLabel("错误：网络错误"));
+                dialog.pack();
+                dialog.setVisible(true);
+            }
+            System.out.println(result.toString());
         } else {
-            ClientHttp.Post(BaseUrl.GetUrl("/face/login"), res, null);
+            var dialog = new JDialog();
+            var result = ClientHttp.Post(BaseUrl.GetUrl("/face/login"), res, null);
+            if(result.get("statusCode").equals(200)) {
+                var resultBody = (HashMap<String,Object>)result.get("body");
+                if(resultBody.get("statusCode").equals(200)) {
+//                    Bus.EmbedToken = (String) resultBody.get("data");
+                    var resultBodyData = (HashMap<String,Object>)resultBody.get("data");
+                    Bus.EmbedToken = (String)resultBodyData.get("token");
+                    Bus.Uid = (int)resultBodyData.get("uid");
+//                    System.out.println(Bus.Uid);
+                    Bus.UserName = name;
+                    var friendsParams = new HashMap<String,Object>();
+                    friendsParams.put("user",Bus.Uid);
+                    var friendsResult = ClientHttp.Post(BaseUrl.GetUrl("/relation/friends"),null,friendsParams);
+                    if(friendsResult.get("statusCode").equals(200)) {
+                        var friendsRawList = (ArrayList<HashMap<String,Object>>)((HashMap<String,Object>)friendsResult.get("body")).get("data");
+//                        System.out.println(friendsRawList);
+                        friendsRawList.stream().forEach((item)->{
+                            var ret = new User((String)item.get("name"),(int)item.get("id"));
+                            Bus.friendList.add(ret);
+                        });
+                        System.out.println(Bus.friendList);
+                    }
+                    var groupsResult = ClientHttp.Post(BaseUrl.GetUrl("/group/groups"),null,friendsParams);
+                    if(friendsResult.get("statusCode").equals(200)) {
+                        var groupsRawList = (ArrayList<HashMap<String,Object>>)((HashMap<String,Object>)groupsResult.get("body")).get("data");
+                        groupsRawList.stream().forEach((item)->{
+                            var isGroupCreator= "等级 "+item.get("level")+" ";
+                            if((int)item.get("owner") == Bus.Uid) {
+                                isGroupCreator += "(群主)";
+                            }
+                            var ret = new User((String)item.get("groupName")+isGroupCreator,(int)item.get("id"));
+                            Bus.friendList.add(ret);
+                        });
+                        System.out.println(Bus.friendList);
+                    }
+                    dialog.add(new JLabel("登陆成功，您的 UID 是："+Bus.Uid));
+                    dialog.pack();
+                    dialog.setVisible(true);
+                    controller.handleEvent(Event.LOGIN_SUCCESS);
+                } else {
+                    dialog.add(new JLabel("错误："+resultBody.get("msg")));
+                    dialog.pack();
+                    dialog.setVisible(true);
+                }
+            } else {
+                dialog.add(new JLabel("错误：网络错误"));
+                dialog.pack();
+                dialog.setVisible(true);
+            }
+            System.out.println(result.toString());
         }
         mainFrame.dispose();
         grabber.stop();

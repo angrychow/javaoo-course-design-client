@@ -5,6 +5,8 @@ import utils.Bus;
 
 import java.net.URI;
 
+import static utils.Config.WS_URL;
+
 public class ChatWebSocketManager {
     private ChatWebSocket chatWebSocket;
     private Controller controller;
@@ -17,7 +19,7 @@ public class ChatWebSocketManager {
 
         try {
             var temp = String.valueOf(Bus.Uid);
-            chatWebSocket = new ChatWebSocket(new URI("ws://10.28.166.24:19560/ws/"+temp),controller);
+            chatWebSocket = new ChatWebSocket(new URI(WS_URL+temp),controller);
             chatWebSocket.connect();
             while(!chatWebSocket.isOpen());
         } catch (Exception e) {

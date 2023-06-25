@@ -6,6 +6,7 @@ import interfaces.Controller;
 import utils.BaseUrl;
 import utils.Bus;
 import utils.ClientHttp;
+import widgets.face.FaceWidget;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -21,6 +22,8 @@ public class LoginWidget {
     private JPanel lowerPanel;
     private JPanel mainPanel;
     private JButton buttonRegister;
+    private JButton faceLoginButton;
+    private JButton faceRegisterButton;
     private JFrame frame;
     private Controller controller;
 
@@ -38,10 +41,26 @@ public class LoginWidget {
 
     public void showWidget() {
 
+        faceLoginButton.addActionListener((e)->{
+            try {
+                var faceLogin = new FaceWidget(this.accountField.getText(),0,controller);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        faceRegisterButton.addActionListener((e)->{
+            try {
+                var faceLogin = new FaceWidget(this.accountField.getText(),1,controller);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+
         buttonLogin.addActionListener((e)->{
             var dialog = new JDialog();
             dialog.setModal(false);
-            dialog.setTitle("Error!");
+            dialog.setTitle("Hint!");
 //            dialog.setSize(300,200);
             System.out.println(LoginWidget.this.accountField.getText());
             System.out.println(LoginWidget.this.pwdField.getText());
@@ -86,6 +105,9 @@ public class LoginWidget {
                         });
                         System.out.println(Bus.friendList);
                     }
+                    dialog.add(new JLabel("登陆成功，您的 UID 是："+Bus.Uid));
+                    dialog.pack();
+                    dialog.setVisible(true);
                     LoginWidget.this.controller.handleEvent(Event.LOGIN_SUCCESS);
                 } else {
                     dialog.add(new JLabel("错误："+resultBody.get("msg")));
@@ -102,7 +124,7 @@ public class LoginWidget {
         buttonRegister.addActionListener((e)->{
             var dialog = new JDialog();
             dialog.setModal(false);
-            dialog.setTitle("Error!");
+            dialog.setTitle("Success!");
 //            dialog.setSize(300,200);
             System.out.println(LoginWidget.this.accountField.getText());
             System.out.println(LoginWidget.this.pwdField.getText());

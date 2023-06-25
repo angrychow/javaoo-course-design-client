@@ -8,14 +8,17 @@ import utils.Bus;
 import utils.ClientHttp;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class AddFriendWidget {
     private JPanel panel1;
     private JTextField idTextField;
     private JButton addButton;
+    private JList userList;
     private JFrame frame;
     private Controller controller;
+    private ArrayList<User> users;
 
     public AddFriendWidget(Controller c) {
         controller = c;
@@ -38,7 +41,18 @@ public class AddFriendWidget {
         }));
     }
 
+    public void update() {
+        users = new ArrayList<>();
+        var result = ClientHttp.Get(BaseUrl.GetUrl("/user/loadAll"),null);
+        var raws = (ArrayList<HashMap<String,Object>>)((HashMap<String, Object>)result.get("body")).get("data");
+        for(var raw : raws) {
+            users.add(new User((String) raw.get("name"),(int)raw.get("id")));
+        }
+        userList.setListData(users.toArray());
+    }
+
     public void showWidget() {
+        update();
         frame.pack();
         frame.setVisible(true);
     }
