@@ -79,6 +79,9 @@ public class ClientHttp {
 
             // body
             var respEntity = response.getEntity();
+            if (respEntity == null) {
+                return resultMap;
+            }
             resultMap.put("body", objectMapper.readValue(EntityUtils.toString(respEntity), HashMap.class));
             response.close();
             return resultMap;

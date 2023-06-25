@@ -76,7 +76,7 @@ public class MainController implements Controller {
                         if(friendsResult.get("statusCode").equals(200)) {
 
                             var code = (int) ((HashMap<String, Object>) friendsResult.get("body")).get("statusCode");
-                            if (code == 401) {
+                            if (code == 500) {
                                 var dialog = new JDialog();
                                 dialog.setTitle("登录过期");
                                 dialog.add(new JLabel("登录过期或者您的账号在别的设备登陆，请重新登录"));
